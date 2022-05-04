@@ -79,6 +79,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Orders{" + order_id + " | " + client_fio + " | " +product_name + " | " +order_date + " | " +status +'}';
+        return "Orders{" + order_id + " | " + client_fio + " | " + product_name + " | " + order_date + " | " + status + '}';
     }
 }

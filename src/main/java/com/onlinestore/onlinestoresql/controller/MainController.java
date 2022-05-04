@@ -3,40 +3,41 @@ package com.onlinestore.onlinestoresql.controller;
 import com.onlinestore.onlinestoresql.model.Client;
 import com.onlinestore.onlinestoresql.model.Order;
 import com.onlinestore.onlinestoresql.model.Product;
-import com.onlinestore.onlinestoresql.model.SQLrequest;
-import javafx.collections.ListChangeListener;
+import com.onlinestore.onlinestoresql.model.Status;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static com.onlinestore.onlinestoresql.model.SQLrequest.runSQLDeleteOrder;
-import static com.onlinestore.onlinestoresql.model.SQLrequest.runSQLInsertMakeOrder;
+import static com.onlinestore.onlinestoresql.model.SQLrequest.*;
 
 public class MainController {
-
     @FXML
-    Button btnOrder;
+    Button btnOrder, btnChangeDate, btnChangeStatus;
+    @FXML
+    ComboBox<String> comboBoxStatus;
     @FXML
     TableView<Client> tblViewClients;
     @FXML
     TableView<Order> tblViewOrders;
     @FXML
     TableView<Product> tblViewProducts;
+    @FXML
+    TextField textFieldDate;
     Connection conn;
     ObservableList<Client> obsListClients;
     ObservableList<Order> obsListOrders;
     ObservableList<Product> obsListProducts;
+    ObservableList<Status> obsListStatus;
 
 
     public void initialize() {
@@ -45,14 +46,24 @@ public class MainController {
             initTableClients();
             initTableProducts();
             initTableOrders();
+            initComboBoxStatus();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
     }
 
+    public void initComboBoxStatus() {
+        obsListStatus = runSQLSelectStatus(conn);
+        ObservableList<String> obsListOnlyStatus = FXCollections.observableArrayList();
+        for (Status s: obsListStatus) {
+            obsListOnlyStatus.add(s.getStatus());
+        }
+        comboBoxStatus.setItems(obsListOnlyStatus);
+    }
+
     public void initTableClients() {
-        obsListClients = SQLrequest.runSQLSelectClients(conn);
+        obsListClients = runSQLSelectClients(conn);
 
         TableColumn<Client, String> colFio = new TableColumn<>("FIO");
 
@@ -64,7 +75,7 @@ public class MainController {
     }
 
     public void initTableProducts() {
-        obsListProducts = SQLrequest.runSQLSelectProducts(conn);
+        obsListProducts = runSQLSelectProducts(conn);
 
         TableColumn<Product, String> colName = new TableColumn<>("Name");
 
@@ -76,7 +87,7 @@ public class MainController {
     }
 
     public void initTableOrders() {
-        obsListOrders = SQLrequest.runSQLSelectOrders(conn);
+        obsListOrders = runSQLSelectOrders(conn);
 
         TableColumn<Order, String> colOrderId = new TableColumn<>("Order_ID");
         TableColumn<Order, String> colClientFIO = new TableColumn<>("Client_FIO");
@@ -133,5 +144,25 @@ public class MainController {
         Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
         runSQLInsertMakeOrder(conn, selectClient.getId(), selectProduct.getId());
         initTableOrders();
+    }
+
+    public void onButtonChangeDateClick() {
+        Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
+        String newDate = textFieldDate.getText();
+        runSQLUpdateDate(conn, newDate, Integer.parseInt(selectOrder.getOrder_id()));
+        initTableOrders();
+    }
+
+    public void onButtonChangeStatusClick() {
+        Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
+        int newStatus = obsListStatus.get(comboBoxStatus.getSelectionModel().getSelectedIndex()).getId();
+        runSQLUpdateStatus(conn, newStatus, Integer.parseInt(selectOrder.getOrder_id()));
+        initTableOrders();
+    }
+
+    public void onTableViewOrdersClicked() {
+        Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
+        textFieldDate.setText(selectOrder.getOrder_date());
+        comboBoxStatus.setValue(selectOrder.getStatus());
     }
 }

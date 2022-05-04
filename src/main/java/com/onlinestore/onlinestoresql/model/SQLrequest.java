@@ -45,6 +45,22 @@ public class SQLrequest {
         return obsListProducts;
     }
 
+    public static ObservableList<Status> runSQLSelectStatus(Connection conn) {
+        ObservableList<Status> obsListStatus = FXCollections.observableArrayList();
+        try {
+            String request = "SELECT * FROM \"Status\"";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                obsListStatus.add(new Status(rs.getInt("ID"),
+                        rs.getString("Status")));
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return obsListStatus;
+    }
+
     public static ObservableList<Order> runSQLSelectOrders(Connection conn) {
         ObservableList<Order> obsListOrders = FXCollections.observableArrayList();
         try {
@@ -82,6 +98,24 @@ public class SQLrequest {
             statement.execute();
         } catch (SQLException e) {
             System.out.println("delete ERROR: " + e.getMessage());
+        }
+    }
+    public static void runSQLUpdateDate(Connection conn, String date, int id) {
+        try {
+            String request = "UPDATE \"Order\" SET \"Order_date\" = '" + date + "' WHERE \"ID\" = " + id + "; ";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("update ERROR: " + e.getMessage());
+        }
+    }
+    public static void runSQLUpdateStatus(Connection conn, int status, int id) {
+        try {
+            String request = "UPDATE \"Order\" SET \"Status\" = " + status + " WHERE \"ID\" = " + id + "; ";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("update ERROR: " + e.getMessage());
         }
     }
 }
