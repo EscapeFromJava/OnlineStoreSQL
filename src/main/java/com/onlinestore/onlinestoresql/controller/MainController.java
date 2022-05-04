@@ -9,9 +9,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.sql.Connection;
@@ -22,7 +22,7 @@ import static com.onlinestore.onlinestoresql.model.SQLrequest.*;
 
 public class MainController {
     @FXML
-    Button btnOrder, btnChangeDate, btnChangeStatus;
+    Button btnOrder, btnChange;
     @FXML
     ComboBox<String> comboBoxStatus;
     @FXML
@@ -89,7 +89,7 @@ public class MainController {
     public void initTableOrders() {
         obsListOrders = runSQLSelectOrders(conn);
 
-        TableColumn<Order, String> colOrderId = new TableColumn<>("Order_ID");
+        TableColumn<Order, Integer> colOrderId = new TableColumn<>("Order_ID");
         TableColumn<Order, String> colClientFIO = new TableColumn<>("Client_FIO");
         TableColumn<Order, String> colProductName = new TableColumn<>("Product_Name");
         TableColumn<Order, String> colOrderDate = new TableColumn<>("Order_date");
@@ -99,7 +99,8 @@ public class MainController {
         tblViewOrders.getColumns().addAll(colOrderId, colClientFIO, colProductName, colOrderDate, colStatus);
         tblViewOrders.setItems(obsListOrders);
 
-        colOrderId.setCellValueFactory(el -> el.getValue().order_idProperty());
+//        colOrderId.setCellValueFactory(new PropertyValueFactory<Order, Integer>("order_id"));
+        colOrderId.setCellValueFactory(new PropertyValueFactory<Order, Integer>("order_id"));
         colClientFIO.setCellValueFactory(el -> el.getValue().client_fioProperty());
         colProductName.setCellValueFactory(el -> el.getValue().product_nameProperty());
         colOrderDate.setCellValueFactory(el -> el.getValue().order_dateProperty());
@@ -119,7 +120,7 @@ public class MainController {
                         btn.setOnAction((ActionEvent event) -> {
                             Order currentOrder = getTableView().getItems().get(getIndex());
                             obsListOrders.remove(currentOrder);
-                            runSQLDeleteOrder(conn, Integer.parseInt(currentOrder.getOrder_id()));
+                            runSQLDeleteOrder(conn, currentOrder.getOrder_id());
                             initTableOrders();
                         });
                     }
@@ -137,6 +138,8 @@ public class MainController {
                 return cell;
             }
         });
+
+        tblViewOrders.getSortOrder().setAll(colOrderId);
     }
 
     public void onButtonOrderClick() {
@@ -146,17 +149,12 @@ public class MainController {
         initTableOrders();
     }
 
-    public void onButtonChangeDateClick() {
+    public void onButtonChangeClick() {
         Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
         String newDate = textFieldDate.getText();
-        runSQLUpdateDate(conn, newDate, Integer.parseInt(selectOrder.getOrder_id()));
-        initTableOrders();
-    }
-
-    public void onButtonChangeStatusClick() {
-        Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
         int newStatus = obsListStatus.get(comboBoxStatus.getSelectionModel().getSelectedIndex()).getId();
-        runSQLUpdateStatus(conn, newStatus, Integer.parseInt(selectOrder.getOrder_id()));
+        runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
+        runSQLUpdateStatus(conn, newStatus, selectOrder.getOrder_id());
         initTableOrders();
     }
 

@@ -1,23 +1,24 @@
 package com.onlinestore.onlinestoresql.model;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Order {
-    SimpleStringProperty order_id = new SimpleStringProperty();
+    SimpleIntegerProperty order_id = new SimpleIntegerProperty();
     SimpleStringProperty client_fio = new SimpleStringProperty();
     SimpleStringProperty product_name = new SimpleStringProperty();
     SimpleStringProperty order_date = new SimpleStringProperty();
     SimpleStringProperty status = new SimpleStringProperty();
 
-    public String getOrder_id() {
+    public int getOrder_id() {
         return order_id.get();
     }
 
-    public SimpleStringProperty order_idProperty() {
+    public SimpleIntegerProperty order_idProperty() {
         return order_id;
     }
 
-    public void setOrder_id(String order_id) {
+    public void setOrder_id(int order_id) {
         this.order_id.set(order_id);
     }
 
@@ -69,7 +70,7 @@ public class Order {
         this.status.set(status);
     }
 
-    public Order(String order_id, String client_fio, String product_name, String order_date, String status) {
+    public Order(int order_id, String client_fio, String product_name, String order_date, String status) {
         setOrder_id(order_id);
         setClient_fio(client_fio);
         setProduct_name(product_name);

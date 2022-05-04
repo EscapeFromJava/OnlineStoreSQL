@@ -68,7 +68,7 @@ public class SQLrequest {
             PreparedStatement statement = conn.prepareStatement(request);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                obsListOrders.add(new Order(rs.getString("Order_ID"),
+                obsListOrders.add(new Order(rs.getInt("Order_ID"),
                         rs.getString("Client_FIO"),
                         rs.getString("Product_Name"),
                         rs.getString("Order_date"),
