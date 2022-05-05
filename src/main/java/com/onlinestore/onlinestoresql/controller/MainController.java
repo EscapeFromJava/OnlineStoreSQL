@@ -59,7 +59,6 @@ public class MainController {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     public void initializeDatePicker() {
@@ -131,7 +130,15 @@ public class MainController {
         colVolume.setCellValueFactory(new PropertyValueFactory<Product, Integer>("volume"));
 
         colPrice.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        colPrice.setOnEditCommit(event -> {
+            Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
+            runSQLUpdatePrice(conn, event.getNewValue(), selectProduct.getId());
+        });
         colVolume.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        colVolume.setOnEditCommit(event -> {
+            Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
+            runSQLUpdateVolume(conn, event.getNewValue(), selectProduct.getId());
+        });
     }
 
     public void initTableOrders() {

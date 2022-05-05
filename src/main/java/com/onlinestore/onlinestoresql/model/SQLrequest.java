@@ -164,4 +164,22 @@ public class SQLrequest {
             System.out.println("update ERROR: " + e.getMessage());
         }
     }
+    public static void runSQLUpdatePrice(Connection conn, double newPrice, int id) {
+        try {
+            String request = "UPDATE \"Product\" SET \"Price\" = " + newPrice + " WHERE \"ID\" = " + id + "; ";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("update ERROR: " + e.getMessage());
+        }
+    }
+    public static void runSQLUpdateVolume(Connection conn, int newVolume, int id) {
+        try {
+            String request = "UPDATE \"Product\" SET \"Volume\" = " + newVolume + " WHERE \"ID\" = " + id + "; ";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("update ERROR: " + e.getMessage());
+        }
+    }
 }
