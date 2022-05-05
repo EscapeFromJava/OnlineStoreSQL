@@ -14,21 +14,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.onlinestore.onlinestoresql.model.SQLrequest.*;
 
 public class MainController {
-
     @FXML
     AnchorPane anchorPainMain;
     @FXML
-    Button btnOrder, btnChange;
-    @FXML
     ComboBox<String> comboBoxStatus;
+    @FXML
+    DatePicker datePickerCalendar;
     @FXML
     MenuItem menuItemAddClient, menuItemDeleteClient, menuItemAddProduct, menuItemDeleteProduct;
     @FXML
@@ -38,7 +40,7 @@ public class MainController {
     @FXML
     TableView<Product> tblViewProducts;
     @FXML
-    TextField textFieldDate, textFieldAddClient, textFieldAddProductName, textFieldAddProductPrice, textFieldAddProductVolume;
+    TextField textFieldTime, textFieldAddClient, textFieldAddProductName, textFieldAddProductPrice, textFieldAddProductVolume;
     Connection conn;
     ObservableList<Client> obsListClients;
     ObservableList<Order> obsListOrders;
@@ -49,20 +51,44 @@ public class MainController {
     public void initialize() {
         try {
             conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/OnlineStore", "postgres", "123");
-            initTableClients();
-            initTableProducts();
-            initTableOrders();
-            initComboBoxStatus();
+            updateAllTables();
+            initializeDatePicker();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
     }
 
+    public void initializeDatePicker() {
+        StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
+            DateTimeFormatter dateFormatter =
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            @Override
+            public String toString(LocalDate date) {
+                if (date != null) {
+                    return dateFormatter.format(date);
+                } else {
+                    return "";
+                }
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                if (string != null && !string.isEmpty()) {
+                    return LocalDate.parse(string, dateFormatter);
+                } else {
+                    return null;
+                }
+            }
+        };
+        datePickerCalendar.setConverter(converter);
+    }
+
     public void initComboBoxStatus() {
         obsListStatus = runSQLSelectStatus(conn);
         ObservableList<String> obsListOnlyStatus = FXCollections.observableArrayList();
-        for (Status s: obsListStatus) {
+        for (Status s : obsListStatus) {
             obsListOnlyStatus.add(s.getStatus());
         }
         comboBoxStatus.setItems(obsListOnlyStatus);
@@ -84,12 +110,16 @@ public class MainController {
         obsListProducts = runSQLSelectProducts(conn);
 
         TableColumn<Product, String> colName = new TableColumn<>("Name");
+        TableColumn<Product, Double> colPrice = new TableColumn<>("Price");
+        TableColumn<Product, Integer> colVolume = new TableColumn<>("Volume");
 
         tblViewProducts.getColumns().clear();
-        tblViewProducts.getColumns().add(colName);
+        tblViewProducts.getColumns().addAll(colName, colPrice, colVolume);
         tblViewProducts.setItems(obsListProducts);
 
         colName.setCellValueFactory(el -> el.getValue().nameProperty());
+        colPrice.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
+        colVolume.setCellValueFactory(new PropertyValueFactory<Product, Integer>("volume"));
     }
 
     public void initTableOrders() {
@@ -160,7 +190,7 @@ public class MainController {
     public void onButtonChangeClick() {
         if (tblViewOrders.getSelectionModel().getSelectedItem() != null) {
             Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
-            String newDate = textFieldDate.getText();
+            String newDate = datePickerCalendar.getValue() + " " + textFieldTime.getText();
             int newStatus = obsListStatus.get(comboBoxStatus.getSelectionModel().getSelectedIndex()).getId();
             runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
             runSQLUpdateStatus(conn, newStatus, selectOrder.getOrder_id());
@@ -170,8 +200,14 @@ public class MainController {
 
     public void onTableViewOrdersClicked() {
         Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
-        textFieldDate.setText(selectOrder.getOrder_date());
-        comboBoxStatus.setValue(selectOrder.getStatus());
+        if (selectOrder.getOrder_date() != null) {
+            LocalDate localDate = LocalDate.parse(selectOrder.getOrder_date().substring(0, 10));
+            datePickerCalendar.setValue(localDate);
+            textFieldTime.setText(selectOrder.getOrder_date().substring(11));
+        }
+        if (selectOrder.getStatus() != null) {
+            comboBoxStatus.setValue(selectOrder.getStatus());
+        }
     }
 
     public void onMenuItemAddClientClick() {
@@ -212,5 +248,16 @@ public class MainController {
             initTableProducts();
             initTableOrders();
         }
+    }
+
+    public void updateAllTables() {
+        initTableClients();
+        initTableProducts();
+        initTableOrders();
+        initComboBoxStatus();
+    }
+
+    public void onButtonRefreshAllClick() {
+        updateAllTables();
     }
 }
