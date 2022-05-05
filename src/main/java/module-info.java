@@ -7,7 +7,7 @@ module com.onlinestore.onlinestoresql {
     opens com.onlinestore.onlinestoresql.controller to javafx.fxml;
 
     exports com.onlinestore.onlinestoresql;
-    exports com.onlinestore.onlinestoresql.model;
+    exports com.onlinestore.onlinestoresql.model.requestsSQL;
     exports com.onlinestore.onlinestoresql.controller;
     exports com.onlinestore.onlinestoresql.model.itemsSQL;
 }

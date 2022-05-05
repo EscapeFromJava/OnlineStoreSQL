@@ -4,6 +4,11 @@ import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Status;
+
+import com.onlinestore.onlinestoresql.model.requestsSQL.Delete;
+import com.onlinestore.onlinestoresql.model.requestsSQL.Insert;
+import com.onlinestore.onlinestoresql.model.requestsSQL.Select;
+import com.onlinestore.onlinestoresql.model.requestsSQL.Update;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,7 +30,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static com.onlinestore.onlinestoresql.model.SQLrequest.*;
+import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteOrder;
+import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInsertMakeOrder;
 
 public class MainController {
     @FXML
@@ -88,7 +94,7 @@ public class MainController {
     }
 
     public void initComboBoxStatus() {
-        obsListStatus = runSQLSelectStatus(conn);
+        obsListStatus = Select.runSQLSelectStatus(conn);
         ObservableList<String> obsListOnlyStatus = FXCollections.observableArrayList();
         for (Status s : obsListStatus) {
             obsListOnlyStatus.add(s.getStatus());
@@ -97,7 +103,7 @@ public class MainController {
     }
 
     public void initTableClients() {
-        obsListClients = runSQLSelectClients(conn);
+        obsListClients = Select.runSQLSelectClients(conn);
 
         TableColumn<Client, String> colFio = new TableColumn<>("FIO");
 
@@ -112,7 +118,7 @@ public class MainController {
     }
 
     public void initTableProducts() {
-        obsListProducts = runSQLSelectProducts(conn);
+        obsListProducts = Select.runSQLSelectProducts(conn);
 
         TableColumn<Product, String> colName = new TableColumn<>("Name");
         TableColumn<Product, Double> colPrice = new TableColumn<>("Price");
@@ -132,17 +138,17 @@ public class MainController {
         colPrice.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         colPrice.setOnEditCommit(event -> {
             Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-            runSQLUpdatePrice(conn, event.getNewValue(), selectProduct.getId());
+            Update.runSQLUpdatePrice(conn, event.getNewValue(), selectProduct.getId());
         });
         colVolume.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         colVolume.setOnEditCommit(event -> {
             Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-            runSQLUpdateVolume(conn, event.getNewValue(), selectProduct.getId());
+            Update.runSQLUpdateVolume(conn, event.getNewValue(), selectProduct.getId());
         });
     }
 
     public void initTableOrders() {
-        obsListOrders = runSQLSelectOrders(conn);
+        obsListOrders = Select.runSQLSelectOrders(conn);
 
         TableColumn<Order, Integer> colOrderId = new TableColumn<>("Order_ID");
         TableColumn<Order, String> colClientFIO = new TableColumn<>("Client_FIO");
@@ -214,8 +220,8 @@ public class MainController {
             Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
             String newDate = datePickerCalendar.getValue() + " " + textFieldTime.getText();
             int newStatus = obsListStatus.get(comboBoxStatus.getSelectionModel().getSelectedIndex()).getId();
-            runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
-            runSQLUpdateStatus(conn, newStatus, selectOrder.getOrder_id());
+            Update.runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
+            Update.runSQLUpdateStatus(conn, newStatus, selectOrder.getOrder_id());
             initTableOrders();
         }
     }
@@ -235,7 +241,7 @@ public class MainController {
     public void onMenuItemAddClientClick() {
         if (!textFieldAddClient.getText().equals("")) {
             String newFIO = textFieldAddClient.getText();
-            runSQLInsertAddClient(conn, newFIO);
+            Insert.runSQLInsertAddClient(conn, newFIO);
             initTableClients();
             textFieldAddClient.clear();
         }
@@ -244,7 +250,7 @@ public class MainController {
     public void onMenuItemDeleteClientClick() {
         Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
         if (selectClient != null) {
-            runSQLDeleteClient(conn, selectClient.getId());
+            Delete.runSQLDeleteClient(conn, selectClient.getId());
             initTableClients();
             initTableOrders();
         }
@@ -255,7 +261,7 @@ public class MainController {
             String newProductName = textFieldAddProductName.getText();
             double newProductPrice = Double.parseDouble(textFieldAddProductPrice.getText());
             int newProductVolume = Integer.parseInt(textFieldAddProductVolume.getText());
-            runSQLInsertAddProduct(conn, newProductName, newProductPrice, newProductVolume);
+            Insert.runSQLInsertAddProduct(conn, newProductName, newProductPrice, newProductVolume);
             initTableProducts();
             textFieldAddProductName.clear();
             textFieldAddProductPrice.clear();
@@ -266,7 +272,7 @@ public class MainController {
     public void onMenuItemDeleteProductClick() {
         Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
         if (selectProduct != null) {
-            runSQLDeleteProduct(conn, selectProduct.getId());
+            Delete.runSQLDeleteProduct(conn, selectProduct.getId());
             initTableProducts();
             initTableOrders();
         }
