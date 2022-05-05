@@ -10,11 +10,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -103,6 +106,9 @@ public class MainController {
         tblViewClients.getColumns().add(colFio);
         tblViewClients.setItems(obsListClients);
 
+        for (TableColumn currentColumn: tblViewClients.getColumns())
+            currentColumn.setStyle("-fx-alignment: CENTER;");
+
         colFio.setCellValueFactory(el -> el.getValue().fioProperty());
     }
 
@@ -117,9 +123,15 @@ public class MainController {
         tblViewProducts.getColumns().addAll(colName, colPrice, colVolume);
         tblViewProducts.setItems(obsListProducts);
 
+        for (TableColumn currentColumn: tblViewProducts.getColumns())
+            currentColumn.setStyle("-fx-alignment: CENTER;");
+
         colName.setCellValueFactory(el -> el.getValue().nameProperty());
         colPrice.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
         colVolume.setCellValueFactory(new PropertyValueFactory<Product, Integer>("volume"));
+
+        colPrice.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+        colVolume.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
     }
 
     public void initTableOrders() {
@@ -135,7 +147,6 @@ public class MainController {
         tblViewOrders.getColumns().addAll(colOrderId, colClientFIO, colProductName, colOrderDate, colStatus);
         tblViewOrders.setItems(obsListOrders);
 
-//        colOrderId.setCellValueFactory(new PropertyValueFactory<Order, Integer>("order_id"));
         colOrderId.setCellValueFactory(new PropertyValueFactory<Order, Integer>("order_id"));
         colClientFIO.setCellValueFactory(el -> el.getValue().client_fioProperty());
         colProductName.setCellValueFactory(el -> el.getValue().product_nameProperty());
@@ -144,6 +155,10 @@ public class MainController {
 
         TableColumn<Order, Void> colButtonDelete = new TableColumn<>("Delete");
         tblViewOrders.getColumns().add(colButtonDelete);
+
+        for (TableColumn currentColumn: tblViewOrders.getColumns())
+            currentColumn.setStyle("-fx-alignment: CENTER;");
+
         colButtonDelete.setCellFactory(new Callback<>() {
             @Override
             public TableCell<Order, Void> call(final TableColumn<Order, Void> param) {
