@@ -147,7 +147,7 @@ public class MainController {
         colButtonDelete.setCellFactory(new Callback<>() {
             @Override
             public TableCell<Order, Void> call(final TableColumn<Order, Void> param) {
-                final TableCell<Order, Void> cell = new TableCell<>() {
+                final TableCell<Order, Void> cell = new TableCell<Order, Void>() {
                     private final Button btn = new Button();
 
                     {

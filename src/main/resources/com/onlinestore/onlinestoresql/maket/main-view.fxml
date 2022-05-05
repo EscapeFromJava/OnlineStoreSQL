@@ -30,7 +30,7 @@
             </ContextMenu>
          </contextMenu>
       </TableView>
-      <TableView fx:id="tblViewProducts" layoutX="354.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="407.0">
+      <TableView fx:id="tblViewProducts" layoutX="354.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="407.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="250.0">
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
@@ -63,7 +63,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <VBox alignment="CENTER" layoutX="780.0" layoutY="20.0" prefHeight="250.0" prefWidth="200.0" spacing="20.0">
+      <VBox alignment="CENTER" layoutX="780.0" layoutY="20.0" prefHeight="250.0" prefWidth="200.0" spacing="20.0" AnchorPane.rightAnchor="20.0">
          <children>
             <Button mnemonicParsing="false" onAction="#onButtonRefreshAllClick" prefWidth="100.0" text="Refresh All" />
             <HBox alignment="CENTER" prefHeight="25.0" prefWidth="200.0" spacing="10.0">

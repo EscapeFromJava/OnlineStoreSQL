@@ -14,6 +14,8 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Online Store");
         stage.setScene(scene);
+        stage.setMinWidth(1000);
+        stage.setMinHeight(600);
         stage.show();
     }
 
