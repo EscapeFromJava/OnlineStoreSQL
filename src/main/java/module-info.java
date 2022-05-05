@@ -9,4 +9,5 @@ module com.onlinestore.onlinestoresql {
     exports com.onlinestore.onlinestoresql;
     exports com.onlinestore.onlinestoresql.model;
     exports com.onlinestore.onlinestoresql.controller;
+    exports com.onlinestore.onlinestoresql.model.itemsSQL;
 }

@@ -1,4 +1,4 @@
-package com.onlinestore.onlinestoresql.model;
+package com.onlinestore.onlinestoresql.model.itemsSQL;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;

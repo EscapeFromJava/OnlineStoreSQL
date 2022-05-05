@@ -1,9 +1,9 @@
 package com.onlinestore.onlinestoresql.controller;
 
-import com.onlinestore.onlinestoresql.model.Client;
-import com.onlinestore.onlinestoresql.model.Order;
-import com.onlinestore.onlinestoresql.model.Product;
-import com.onlinestore.onlinestoresql.model.Status;
+import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
+import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
+import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
+import com.onlinestore.onlinestoresql.model.itemsSQL.Status;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
