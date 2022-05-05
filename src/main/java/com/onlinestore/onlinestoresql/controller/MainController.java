@@ -4,7 +4,6 @@ import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Status;
-
 import com.onlinestore.onlinestoresql.model.requestsSQL.Delete;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Insert;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Select;
@@ -35,13 +34,9 @@ import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInse
 
 public class MainController {
     @FXML
-    AnchorPane anchorPainMain;
-    @FXML
     ComboBox<String> comboBoxStatus;
     @FXML
     DatePicker datePickerCalendar;
-    @FXML
-    MenuItem menuItemAddClient, menuItemDeleteClient, menuItemAddProduct, menuItemDeleteProduct;
     @FXML
     TableView<Client> tblViewClients;
     @FXML
@@ -55,7 +50,6 @@ public class MainController {
     ObservableList<Order> obsListOrders;
     ObservableList<Product> obsListProducts;
     ObservableList<Status> obsListStatus;
-
 
     public void initialize() {
         try {
@@ -111,7 +105,7 @@ public class MainController {
         tblViewClients.getColumns().add(colFio);
         tblViewClients.setItems(obsListClients);
 
-        for (TableColumn currentColumn: tblViewClients.getColumns())
+        for (TableColumn currentColumn : tblViewClients.getColumns())
             currentColumn.setStyle("-fx-alignment: CENTER;");
 
         colFio.setCellValueFactory(el -> el.getValue().fioProperty());
@@ -128,7 +122,7 @@ public class MainController {
         tblViewProducts.getColumns().addAll(colName, colPrice, colVolume);
         tblViewProducts.setItems(obsListProducts);
 
-        for (TableColumn currentColumn: tblViewProducts.getColumns())
+        for (TableColumn currentColumn : tblViewProducts.getColumns())
             currentColumn.setStyle("-fx-alignment: CENTER;");
 
         colName.setCellValueFactory(el -> el.getValue().nameProperty());
@@ -169,7 +163,7 @@ public class MainController {
         TableColumn<Order, Void> colButtonDelete = new TableColumn<>("Delete");
         tblViewOrders.getColumns().add(colButtonDelete);
 
-        for (TableColumn currentColumn: tblViewOrders.getColumns())
+        for (TableColumn currentColumn : tblViewOrders.getColumns())
             currentColumn.setStyle("-fx-alignment: CENTER;");
 
         colButtonDelete.setCellFactory(new Callback<>() {

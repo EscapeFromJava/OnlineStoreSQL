@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="anchorPainMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.onlinestore.onlinestoresql.controller.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.onlinestore.onlinestoresql.controller.MainController">
    <children>
       <TableView fx:id="tblViewClients" layoutX="21.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="200.0">
          <columnResizePolicy>
@@ -20,12 +20,12 @@
          <contextMenu>
             <ContextMenu>
                <items>
-                  <MenuItem fx:id="menuItemAddClient" mnemonicParsing="false" onAction="#onMenuItemAddClientClick" text="Add client">
+                  <MenuItem mnemonicParsing="false" onAction="#onMenuItemAddClientClick" text="Add client">
                      <graphic>
                         <TextField fx:id="textFieldAddClient" prefWidth="100.0" />
                      </graphic>
                   </MenuItem>
-                  <MenuItem fx:id="menuItemDeleteClient" mnemonicParsing="false" onAction="#onMenuItemDeleteClientClick" text="Delete client" />
+                  <MenuItem mnemonicParsing="false" onAction="#onMenuItemDeleteClientClick" text="Delete client" />
                </items>
             </ContextMenu>
          </contextMenu>
@@ -52,8 +52,8 @@
                         <TextField fx:id="textFieldAddProductVolume" prefWidth="100.0" />
                      </graphic>
                   </MenuItem>
-                  <MenuItem fx:id="menuItemAddProduct" mnemonicParsing="false" onAction="#onMenuItemAddProductClick" text="Add product" />
-                  <MenuItem fx:id="menuItemDeleteProduct" mnemonicParsing="false" onAction="#onMenuItemDeleteProductClick" text="Delete product" />
+                  <MenuItem mnemonicParsing="false" onAction="#onMenuItemAddProductClick" text="Add product" />
+                  <MenuItem mnemonicParsing="false" onAction="#onMenuItemDeleteProductClick" text="Delete product" />
                </items>
             </ContextMenu>
          </contextMenu>
@@ -73,9 +73,9 @@
                </children>
             </HBox>
             <ComboBox fx:id="comboBoxStatus" prefHeight="25.0" prefWidth="200.0" />
-            <Button fx:id="btnChange" mnemonicParsing="false" onAction="#onButtonChangeClick" prefWidth="100.0" text="Change" />
+            <Button mnemonicParsing="false" onAction="#onButtonChangeClick" prefWidth="100.0" text="Change" />
          </children>
       </VBox>
-      <Button fx:id="btnOrder" layoutX="237.0" layoutY="123.0" mnemonicParsing="false" onAction="#onButtonOrderClick" prefWidth="100.0" text="Order" />
+      <Button layoutX="237.0" layoutY="123.0" mnemonicParsing="false" onAction="#onButtonOrderClick" prefWidth="100.0" text="Order" />
    </children>
 </AnchorPane>
