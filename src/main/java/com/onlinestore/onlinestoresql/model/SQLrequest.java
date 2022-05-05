@@ -91,6 +91,48 @@ public class SQLrequest {
         }
     }
 
+    public static void runSQLInsertAddClient(Connection conn, String fio){
+        try {
+            String request = "INSERT INTO \"Client\"(\"FIO\") " +
+                    "VALUES ('" + fio + "');";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("insert ERROR: " + e.getMessage());
+        }
+    }
+
+    public static void runSQLInsertAddProduct(Connection conn, String product, double price, int volume){
+        try {
+            String request = "INSERT INTO \"Product\"(\"Name\", \"Price\", \"Volume\") " +
+                    "VALUES ('" + product + "', " + price + ", " + volume + ");";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("insert ERROR: " + e.getMessage());
+        }
+    }
+    public static void runSQLDeleteClient(Connection conn, int id){
+        try {
+            String request = "DELETE FROM \"Order\" WHERE \"ID_client\" = " + id + "; " +
+                             "DELETE FROM \"Client\" WHERE \"ID\" = " + id + ";";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("delete ERROR: " + e.getMessage());
+        }
+    }
+    public static void runSQLDeleteProduct(Connection conn, int id){
+        try {
+            String request = "DELETE FROM \"Order\" WHERE \"ID_product\" = " + id + "; " +
+                    "DELETE FROM \"Product\" WHERE \"ID\" = " + id + ";";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("delete ERROR: " + e.getMessage());
+        }
+    }
+
     public static void runSQLDeleteOrder(Connection conn, int orderNumber) {
         try {
             String request = "DELETE FROM \"Order\" WHERE \"Order\".\"ID\" = " + orderNumber + "; ";

@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 
 import java.sql.Connection;
@@ -21,10 +22,15 @@ import java.sql.SQLException;
 import static com.onlinestore.onlinestoresql.model.SQLrequest.*;
 
 public class MainController {
+
+    @FXML
+    AnchorPane anchorPainMain;
     @FXML
     Button btnOrder, btnChange;
     @FXML
     ComboBox<String> comboBoxStatus;
+    @FXML
+    MenuItem menuItemAddClient, menuItemDeleteClient, menuItemAddProduct, menuItemDeleteProduct;
     @FXML
     TableView<Client> tblViewClients;
     @FXML
@@ -32,7 +38,7 @@ public class MainController {
     @FXML
     TableView<Product> tblViewProducts;
     @FXML
-    TextField textFieldDate;
+    TextField textFieldDate, textFieldAddClient, textFieldAddProductName, textFieldAddProductPrice, textFieldAddProductVolume;
     Connection conn;
     ObservableList<Client> obsListClients;
     ObservableList<Order> obsListOrders;
@@ -145,22 +151,66 @@ public class MainController {
     public void onButtonOrderClick() {
         Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
         Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-        runSQLInsertMakeOrder(conn, selectClient.getId(), selectProduct.getId());
-        initTableOrders();
+        if (selectClient != null && selectProduct != null) {
+            runSQLInsertMakeOrder(conn, selectClient.getId(), selectProduct.getId());
+            initTableOrders();
+        }
     }
 
     public void onButtonChangeClick() {
-        Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
-        String newDate = textFieldDate.getText();
-        int newStatus = obsListStatus.get(comboBoxStatus.getSelectionModel().getSelectedIndex()).getId();
-        runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
-        runSQLUpdateStatus(conn, newStatus, selectOrder.getOrder_id());
-        initTableOrders();
+        if (tblViewOrders.getSelectionModel().getSelectedItem() != null) {
+            Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
+            String newDate = textFieldDate.getText();
+            int newStatus = obsListStatus.get(comboBoxStatus.getSelectionModel().getSelectedIndex()).getId();
+            runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
+            runSQLUpdateStatus(conn, newStatus, selectOrder.getOrder_id());
+            initTableOrders();
+        }
     }
 
     public void onTableViewOrdersClicked() {
         Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
         textFieldDate.setText(selectOrder.getOrder_date());
         comboBoxStatus.setValue(selectOrder.getStatus());
+    }
+
+    public void onMenuItemAddClientClick() {
+        if (!textFieldAddClient.getText().equals("")) {
+            String newFIO = textFieldAddClient.getText();
+            runSQLInsertAddClient(conn, newFIO);
+            initTableClients();
+            textFieldAddClient.clear();
+        }
+    }
+
+    public void onMenuItemDeleteClientClick() {
+        Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+        if (selectClient != null) {
+            runSQLDeleteClient(conn, selectClient.getId());
+            initTableClients();
+            initTableOrders();
+        }
+    }
+
+    public void onMenuItemAddProductClick() {
+        if (!textFieldAddProductName.getText().equals("") && !textFieldAddProductPrice.getText().equals("") && !textFieldAddProductVolume.getText().equals("")) {
+            String newProductName = textFieldAddProductName.getText();
+            double newProductPrice = Double.parseDouble(textFieldAddProductPrice.getText());
+            int newProductVolume = Integer.parseInt(textFieldAddProductVolume.getText());
+            runSQLInsertAddProduct(conn, newProductName, newProductPrice, newProductVolume);
+            initTableProducts();
+            textFieldAddProductName.clear();
+            textFieldAddProductPrice.clear();
+            textFieldAddProductVolume.clear();
+        }
+    }
+
+    public void onMenuItemDeleteProductClick() {
+        Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
+        if (selectProduct != null) {
+            runSQLDeleteProduct(conn, selectProduct.getId());
+            initTableProducts();
+            initTableOrders();
+        }
     }
 }
