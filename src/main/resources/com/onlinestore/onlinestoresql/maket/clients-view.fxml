@@ -6,6 +6,8 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.onlinestore.onlinestoresql.controller.ClientsController">
@@ -32,8 +34,20 @@
             <TextField fx:id="textFieldStreet" layoutX="347.0" layoutY="44.0" promptText="Street" />
             <TextField fx:id="textFieldHouse" layoutX="172.0" layoutY="93.0" promptText="House" />
             <TextField fx:id="textFieldApartment" layoutX="347.0" layoutY="93.0" promptText="Apartment" />
-            <Button fx:id="btnAddClient" layoutX="583.0" layoutY="44.0" mnemonicParsing="false" onAction="#onButtonAddClientClick" prefWidth="100.0" text="Add client" />
-            <Button layoutX="583.0" layoutY="93.0" mnemonicParsing="false" onAction="#onButtonClearClick" prefWidth="100.0" text="Clear" />
+            <Button layoutX="521.0" layoutY="25.0" mnemonicParsing="false" onAction="#onButtonAddClientClick">
+               <graphic>
+                  <ImageView>
+                     <Image requestedHeight="25" requestedWidth="25" url="@../img/add_client.png" />
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="521.0" layoutY="77.0" mnemonicParsing="false" onAction="#onButtonClearClick">
+               <graphic>
+                  <ImageView>
+                     <Image requestedHeight="25" requestedWidth="25" url="@../img/clear.png" />
+                  </ImageView>
+               </graphic>
+            </Button>
          </children>
       </AnchorPane>
    </children>

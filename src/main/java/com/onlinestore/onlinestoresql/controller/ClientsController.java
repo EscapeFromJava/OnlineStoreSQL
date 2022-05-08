@@ -3,10 +3,7 @@ package com.onlinestore.onlinestoresql.controller;
 import com.onlinestore.onlinestoresql.MainApplication;
 import com.onlinestore.onlinestoresql.model.itemsSQL.City;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Select;
-import com.onlinestore.onlinestoresql.model.requestsSQL.Update;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,9 +11,11 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
-import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 
 import java.sql.Connection;
 import java.util.regex.Pattern;
@@ -24,14 +23,13 @@ import java.util.regex.Pattern;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteClient;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInsertAddClient;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Select.runSQLSelectCity;
-import static com.onlinestore.onlinestoresql.model.requestsSQL.Update.runSQLUpdateClient;
-import static com.onlinestore.onlinestoresql.model.requestsSQL.Update.runSQLUpdateClientFirstName;
+import static com.onlinestore.onlinestoresql.model.requestsSQL.UpdateClient.*;
 
 public class ClientsController {
     @FXML
     AnchorPane paneAddClient;
     @FXML
-    Button btnAddClient;
+    Button btnClear;
     @FXML
     ComboBox<String> comboBoxCity;
     @FXML
@@ -40,17 +38,23 @@ public class ClientsController {
     TextField textFieldFirstName, textFieldLastName, textFieldPhoneNumber, textFieldDistrict, textFieldStreet, textFieldHouse, textFieldApartment;
     ObservableList<Client> obsListClients;
     ObservableList<City> obsListCity;
+    ObservableList<String> obsListOnlyName;
     Connection conn;
 
     public void initialize() {
         conn = MainApplication.conn;
         initComboBoxCity();
         initTableClients();
+/*        Image icon = new Image(getClass().getResourceAsStream("/com/onlinestore/onlinestoresql/img/clear.png"));
+        ImageView imageView = new ImageView(icon);
+        imageView.setFitHeight(25);
+        imageView.setFitWidth(25);
+        btnClear.setGraphic(imageView);*/
     }
 
     private void initComboBoxCity() {
         obsListCity = runSQLSelectCity(conn);
-        ObservableList<String> obsListOnlyName = FXCollections.observableArrayList(obsListCity.stream().map(x -> x.getName()).toList());
+        obsListOnlyName = FXCollections.observableArrayList(obsListCity.stream().map(x -> x.getName()).toList());
         comboBoxCity.setItems(obsListOnlyName);
         comboBoxCity.getSelectionModel().select(0);
     }
@@ -58,9 +62,8 @@ public class ClientsController {
     public void initTableClients() {
         obsListClients = Select.runSQLSelectClients(conn);
 
-        TableColumn<Client, Integer> colId = new TableColumn<>("ID");
-        TableColumn<Client, String> colFirstName = new TableColumn<>("First name");
         TableColumn<Client, String> colLastName = new TableColumn<>("Last name");
+        TableColumn<Client, String> colFirstName = new TableColumn<>("First name");
         TableColumn<Client, String> colPhoneNumber = new TableColumn<>("Phone number");
         TableColumn<Client, String> colCity = new TableColumn<>("City");
         TableColumn<Client, String> colDistrict = new TableColumn<>("District");
@@ -69,15 +72,14 @@ public class ClientsController {
         TableColumn<Client, Integer> colApartment = new TableColumn<>("Apartment");
 
         tblViewClients.getColumns().clear();
-        tblViewClients.getColumns().addAll(colId, colFirstName, colLastName, colPhoneNumber, colCity, colDistrict, colStreet, colHouse, colApartment);
+        tblViewClients.getColumns().addAll(colLastName, colFirstName, colPhoneNumber, colCity, colDistrict, colStreet, colHouse, colApartment);
         tblViewClients.setItems(obsListClients);
 
         for (TableColumn currentColumn : tblViewClients.getColumns())
             currentColumn.setStyle("-fx-alignment: CENTER;");
 
-        colId.setCellValueFactory(new PropertyValueFactory<Client, Integer>("id"));
-        colFirstName.setCellValueFactory(el -> el.getValue().first_nameProperty());
         colLastName.setCellValueFactory(el -> el.getValue().last_nameProperty());
+        colFirstName.setCellValueFactory(el -> el.getValue().first_nameProperty());
         colPhoneNumber.setCellValueFactory(el -> el.getValue().phone_numberProperty());
         colCity.setCellValueFactory(el -> el.getValue().cityProperty());
         colDistrict.setCellValueFactory(el -> el.getValue().districtProperty());
@@ -92,9 +94,82 @@ public class ClientsController {
             initTableClients();
         });
 
-        //todo
-        // 1) доделать редактор всех оставшихся полей
-        // 2) убрать колонку ID
+        colLastName.setCellFactory(TextFieldTableCell.forTableColumn());
+        colLastName.setOnEditCommit(event -> {
+            Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+            runSQLUpdateClientLastName(conn, event.getNewValue(), selectClient.getId());
+            initTableClients();
+        });
+
+        colPhoneNumber.setCellFactory(TextFieldTableCell.forTableColumn());
+        colPhoneNumber.setOnEditCommit(event -> {
+            Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+            runSQLUpdateClientPhoneNumber(conn, event.getNewValue(), selectClient.getId());
+            initTableClients();
+        });
+
+        colCity.setCellFactory(new Callback<TableColumn<Client, String>, TableCell<Client, String>>() {
+            @Override
+            public TableCell<Client, String> call(final TableColumn<Client, String> param) {
+                final TableCell<Client, String> cell = new TableCell<Client, String>() {
+
+                    private final ComboBox comboBoxCity = new ComboBox();
+
+                    {
+                        comboBoxCity.setItems(obsListOnlyName);
+                    }
+
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(comboBoxCity);
+                            comboBoxCity.setValue(item);
+                            comboBoxCity.setOnAction(event -> {
+                                Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+                                if (selectClient != null && comboBoxCity.isFocused()) {
+                                    String newCity = comboBoxCity.getValue().toString();
+                                    runSQLUpdateClientCity(conn, newCity, selectClient.getId());
+                                }
+                            });
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+
+        colDistrict.setCellFactory(TextFieldTableCell.forTableColumn());
+        colDistrict.setOnEditCommit(event -> {
+            Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+            runSQLUpdateClientDistrict(conn, event.getNewValue(), selectClient.getId());
+            initTableClients();
+        });
+
+        colStreet.setCellFactory(TextFieldTableCell.forTableColumn());
+        colStreet.setOnEditCommit(event -> {
+            Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+            runSQLUpdateClientStreet(conn, event.getNewValue(), selectClient.getId());
+            initTableClients();
+        });
+
+        colHouse.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        colHouse.setOnEditCommit(event -> {
+            Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+            runSQLUpdateClientHouse(conn, event.getNewValue(), selectClient.getId());
+            initTableClients();
+        });
+
+        colApartment.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        colApartment.setOnEditCommit(event -> {
+            Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+            runSQLUpdateClientApartment(conn, event.getNewValue(), selectClient.getId());
+            initTableClients();
+        });
+
+        tblViewClients.getSortOrder().setAll(colLastName);
     }
 
     public void onButtonAddClientClick() {

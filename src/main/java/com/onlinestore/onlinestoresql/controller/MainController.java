@@ -9,6 +9,7 @@ import com.onlinestore.onlinestoresql.model.requestsSQL.Delete;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Insert;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Select;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Update;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -121,18 +122,13 @@ public class MainController {
     private void initTableClients() {
         obsListClients = Select.runSQLSelectClients(conn);
 
-        TableColumn<Client, String> colFirstName = new TableColumn<>("First name");
-        TableColumn<Client, String> colLastName = new TableColumn<>("Last Name");
+        TableColumn<Client, String> colClient = new TableColumn<>("Client");
 
         tblViewClients.getColumns().clear();
-        tblViewClients.getColumns().addAll(colFirstName, colLastName);
+        tblViewClients.getColumns().add(colClient);
         tblViewClients.setItems(obsListClients);
 
-        for (TableColumn currentColumn : tblViewClients.getColumns())
-            currentColumn.setStyle("-fx-alignment: CENTER;");
-
-        colFirstName.setCellValueFactory(el -> el.getValue().first_nameProperty());
-        colLastName.setCellValueFactory(el -> el.getValue().last_nameProperty());
+        colClient.setCellValueFactory(cellData -> Bindings.createStringBinding( () -> cellData.getValue().getLast_name() + " " + cellData.getValue().getFirst_name()));
     }
 
     public void initTableOrders() {
