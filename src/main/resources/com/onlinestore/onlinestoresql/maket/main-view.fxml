@@ -64,7 +64,7 @@
       </TableView>
       <VBox alignment="CENTER" layoutX="780.0" layoutY="20.0" prefHeight="250.0" prefWidth="200.0" spacing="20.0" AnchorPane.rightAnchor="20.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#onButtonBasketClick" text="Basket" />
+            <Button mnemonicParsing="false" onAction="#onButtonClientsClick" text="Clients" />
             <Button mnemonicParsing="false" onAction="#onButtonRefreshAllClick" prefWidth="100.0" text="Refresh All" />
             <HBox alignment="CENTER" prefHeight="25.0" prefWidth="200.0" spacing="10.0">
                <children>

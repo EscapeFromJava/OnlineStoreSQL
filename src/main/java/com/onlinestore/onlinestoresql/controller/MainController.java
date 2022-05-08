@@ -20,7 +20,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -29,8 +28,6 @@ import javafx.util.converter.IntegerStringConverter;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -49,19 +46,14 @@ public class MainController {
     @FXML
     TextField textFieldTime, textFieldAddClient, textFieldAddProductName, textFieldAddProductPrice, textFieldAddProductVolume;
     Connection conn;
-    ObservableList<Client> obsListClients;
     ObservableList<Order> obsListOrders;
     ObservableList<Product> obsListProducts;
     ObservableList<Status> obsListStatus;
 
     public void initialize() {
-        try {
-            conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/OnlineStore", "postgres", "123");
-            updateAllTables();
-            initializeDatePicker();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+        conn = MainApplication.conn;
+        updateAllTables();
+        initializeDatePicker();
     }
 
     public void initializeDatePicker() {
@@ -94,20 +86,7 @@ public class MainController {
         obsListStatus = Select.runSQLSelectStatus(conn);
     }
 
-    public void initTableClients() {
-        obsListClients = Select.runSQLSelectClients(conn);
 
-        TableColumn<Client, String> colFio = new TableColumn<>("FIO");
-
-        tblViewClients.getColumns().clear();
-        tblViewClients.getColumns().add(colFio);
-        tblViewClients.setItems(obsListClients);
-
-        for (TableColumn currentColumn : tblViewClients.getColumns())
-            currentColumn.setStyle("-fx-alignment: CENTER;");
-
-        colFio.setCellValueFactory(el -> el.getValue().fioProperty());
-    }
 
     public void initTableProducts() {
         obsListProducts = Select.runSQLSelectProducts(conn);
@@ -275,7 +254,7 @@ public class MainController {
         if (!textFieldAddClient.getText().equals("")) {
             String newFIO = textFieldAddClient.getText();
             Insert.runSQLInsertAddClient(conn, newFIO);
-            initTableClients();
+            //initTableClients();
             textFieldAddClient.clear();
         }
     }
@@ -284,7 +263,7 @@ public class MainController {
         Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
         if (selectClient != null) {
             Delete.runSQLDeleteClient(conn, selectClient.getId());
-            initTableClients();
+            //initTableClients();
             initTableOrders();
         }
     }
@@ -313,7 +292,6 @@ public class MainController {
 
     public void updateAllTables() {
         initComboBoxStatus();
-        initTableClients();
         initTableProducts();
         initTableOrders();
     }
@@ -322,10 +300,10 @@ public class MainController {
         updateAllTables();
     }
 
-    public void onButtonBasketClick() {
+    public void onButtonClientsClick() {
         try {
             Stage stage = new Stage();
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/basket-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/clients-view.fxml"));
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.setTitle("Basket");
             stage.showAndWait();

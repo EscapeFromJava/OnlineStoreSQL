@@ -16,12 +16,19 @@ public class Select {
     public static ObservableList<Client> runSQLSelectClients(Connection conn) {
         ObservableList<Client> obsListClients = FXCollections.observableArrayList();
         try {
-            String request = "SELECT * FROM \"Client\"";
+            String request = "SELECT * FROM clients";
             PreparedStatement statement = conn.prepareStatement(request);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                obsListClients.add(new Client(rs.getInt("ID"),
-                        rs.getString("FIO")));
+                obsListClients.add(new Client(rs.getInt("id"),
+                                        rs.getString("first_name"),
+                                        rs.getString("last_name"),
+                                        rs.getString("phone_number"),
+                                        rs.getString("city"),
+                                        rs.getString("district"),
+                                        rs.getString("street"),
+                                        rs.getInt("house"),
+                                        rs.getInt("apartment")));
             }
         } catch (SQLException e) {
             System.out.println("select ERROR: " + e.getMessage());
