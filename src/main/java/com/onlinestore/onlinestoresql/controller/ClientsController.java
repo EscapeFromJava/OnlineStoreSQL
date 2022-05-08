@@ -3,9 +3,12 @@ package com.onlinestore.onlinestoresql.controller;
 import com.onlinestore.onlinestoresql.MainApplication;
 import com.onlinestore.onlinestoresql.model.itemsSQL.City;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
+import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
+import com.onlinestore.onlinestoresql.model.requestsSQL.Delete;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Select;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -20,7 +23,9 @@ import javafx.util.converter.IntegerStringConverter;
 import java.sql.Connection;
 import java.util.regex.Pattern;
 
+import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteCity;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteClient;
+import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInsertAddCity;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInsertAddClient;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Select.runSQLSelectCity;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.UpdateClient.*;
@@ -35,7 +40,7 @@ public class ClientsController {
     @FXML
     TableView<Client> tblViewClients;
     @FXML
-    TextField textFieldFirstName, textFieldLastName, textFieldPhoneNumber, textFieldDistrict, textFieldStreet, textFieldHouse, textFieldApartment;
+    TextField textFieldFirstName, textFieldLastName, textFieldPhoneNumber, textFieldDistrict, textFieldStreet, textFieldHouse, textFieldApartment, textFieldAddCity;
     ObservableList<Client> obsListClients;
     ObservableList<City> obsListCity;
     ObservableList<String> obsListOnlyName;
@@ -43,13 +48,17 @@ public class ClientsController {
 
     public void initialize() {
         conn = MainApplication.conn;
-        initComboBoxCity();
-        initTableClients();
+        initializeTables();
 /*        Image icon = new Image(getClass().getResourceAsStream("/com/onlinestore/onlinestoresql/img/clear.png"));
         ImageView imageView = new ImageView(icon);
         imageView.setFitHeight(25);
         imageView.setFitWidth(25);
         btnClear.setGraphic(imageView);*/
+    }
+
+    private void initializeTables() {
+        initComboBoxCity();
+        initTableClients();
     }
 
     private void initComboBoxCity() {
@@ -235,6 +244,22 @@ public class ClientsController {
             textFieldStreet.setText(selectClient.getStreet());
             textFieldHouse.setText(String.valueOf(selectClient.getHouse()));
             textFieldApartment.setText(String.valueOf(selectClient.getApartment()));
+        }
+    }
+//todo мне не нравится
+    public void onMenuItemAddCityClick() {
+        if (!textFieldAddCity.getText().equals("")) {
+            String newCity = textFieldAddCity.getText();
+            runSQLInsertAddCity(conn, newCity);
+            initializeTables();
+        }
+    }
+
+    public void onMenuItemDeleteCityClick() {
+        String selectCity = comboBoxCity.getSelectionModel().getSelectedItem();
+        if (selectCity != null) {
+            runSQLDeleteCity(conn, selectCity);
+            initializeTables();
         }
     }
 }

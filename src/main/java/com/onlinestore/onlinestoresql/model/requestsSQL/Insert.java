@@ -18,6 +18,16 @@ public class Insert {
         }
     }
 
+    public static void runSQLInsertAddCity(Connection conn, String newCity) {
+        try {
+            String request = "INSERT INTO city (name) VALUES ('" + newCity + "');";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("insert ERROR: " + e.getMessage());
+        }
+    }
+
     public static void runSQLInsertAddClient(Connection conn, Client newClient){
         try {
             String request = "INSERT INTO client(first_name, last_name, phone_number, district, street, house, apartment, city) " +

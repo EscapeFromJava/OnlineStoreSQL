@@ -15,6 +15,16 @@ public class Delete {
             System.out.println("delete ERROR: " + e.getMessage());
         }
     }
+
+    public static void runSQLDeleteCity(Connection conn, String deletedCity){
+        try {
+            String request = "DELETE FROM city WHERE name = '" + deletedCity + "';";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("delete ERROR: " + e.getMessage());
+        }
+    }
     public static void runSQLDeleteProduct(Connection conn, int id){
         try {
             String request = "DELETE FROM \"Order\" WHERE \"ID_product\" = " + id + "; " +
