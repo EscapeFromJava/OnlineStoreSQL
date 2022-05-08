@@ -44,8 +44,9 @@ public class MainController {
     @FXML
     TableView<Product> tblViewProducts;
     @FXML
-    TextField textFieldTime, textFieldAddClient, textFieldAddProductName, textFieldAddProductPrice, textFieldAddProductVolume;
+    TextField textFieldTime, textFieldAddProductName, textFieldAddProductPrice, textFieldAddProductVolume;
     Connection conn;
+    ObservableList<Client> obsListClients;
     ObservableList<Order> obsListOrders;
     ObservableList<Product> obsListProducts;
     ObservableList<Status> obsListStatus;
@@ -116,6 +117,22 @@ public class MainController {
             Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
             Update.runSQLUpdateVolume(conn, event.getNewValue(), selectProduct.getId());
         });
+    }
+    private void initTableClients() {
+        obsListClients = Select.runSQLSelectClients(conn);
+
+        TableColumn<Client, String> colFirstName = new TableColumn<>("First name");
+        TableColumn<Client, String> colLastName = new TableColumn<>("Last Name");
+
+        tblViewClients.getColumns().clear();
+        tblViewClients.getColumns().addAll(colFirstName, colLastName);
+        tblViewClients.setItems(obsListClients);
+
+        for (TableColumn currentColumn : tblViewClients.getColumns())
+            currentColumn.setStyle("-fx-alignment: CENTER;");
+
+        colFirstName.setCellValueFactory(el -> el.getValue().first_nameProperty());
+        colLastName.setCellValueFactory(el -> el.getValue().last_nameProperty());
     }
 
     public void initTableOrders() {
@@ -250,24 +267,6 @@ public class MainController {
         }
     }
 
-    public void onMenuItemAddClientClick() {
-        if (!textFieldAddClient.getText().equals("")) {
-            String newFIO = textFieldAddClient.getText();
-            Insert.runSQLInsertAddClient(conn, newFIO);
-            //initTableClients();
-            textFieldAddClient.clear();
-        }
-    }
-
-    public void onMenuItemDeleteClientClick() {
-        Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
-        if (selectClient != null) {
-            Delete.runSQLDeleteClient(conn, selectClient.getId());
-            //initTableClients();
-            initTableOrders();
-        }
-    }
-
     public void onMenuItemAddProductClick() {
         if (!textFieldAddProductName.getText().equals("") && !textFieldAddProductPrice.getText().equals("") && !textFieldAddProductVolume.getText().equals("")) {
             String newProductName = textFieldAddProductName.getText();
@@ -294,7 +293,10 @@ public class MainController {
         initComboBoxStatus();
         initTableProducts();
         initTableOrders();
+        initTableClients();
     }
+
+
 
     public void onButtonRefreshAllClick() {
         updateAllTables();
@@ -305,7 +307,9 @@ public class MainController {
             Stage stage = new Stage();
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/clients-view.fxml"));
             stage.setScene(new Scene(fxmlLoader.load()));
-            stage.setTitle("Basket");
+            stage.setTitle("Clients");
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
             stage.showAndWait();
         } catch (IOException e) {
             System.out.println(e.getMessage());

@@ -12,22 +12,10 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.onlinestore.onlinestoresql.controller.MainController">
    <children>
-      <TableView fx:id="tblViewClients" layoutX="21.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="200.0">
+      <TableView fx:id="tblViewClients" layoutX="20.0" layoutY="21.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="200.0">
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
-         <contextMenu>
-            <ContextMenu>
-               <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onMenuItemAddClientClick" text="Add client">
-                     <graphic>
-                        <TextField fx:id="textFieldAddClient" prefWidth="100.0" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#onMenuItemDeleteClientClick" text="Delete client" />
-               </items>
-            </ContextMenu>
-         </contextMenu>
       </TableView>
       <TableView fx:id="tblViewProducts" editable="true" layoutX="354.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="230.0" prefWidth="407.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="250.0">
          <columnResizePolicy>

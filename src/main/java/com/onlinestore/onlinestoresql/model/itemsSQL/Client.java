@@ -122,6 +122,17 @@ public class Client {
         this.apartment.set(apartment);
     }
 
+    public Client(String first_name, String last_name, String phone_number, String city, String district, String street, int house, int apartment) {
+        setFirst_name(first_name);
+        setLast_name(last_name);
+        setPhone_number(phone_number);
+        setCity(city);
+        setDistrict(district);
+        setStreet(street);
+        setHouse(house);
+        setApartment(apartment);
+    }
+
     public Client(int id, String first_name, String last_name, String phone_number, String city, String district, String street, int house, int apartment) {
         setId(id);
         setFirst_name(first_name);
@@ -136,16 +147,15 @@ public class Client {
 
     @Override
     public String toString() {
-        return "Client{" +
-                "id=" + id +
-                ", first_name=" + first_name +
-                ", last_name=" + last_name +
-                ", phone_number=" + phone_number +
-                ", city=" + city +
-                ", district=" + district +
-                ", street=" + street +
-                ", house=" + house +
-                ", apartment=" + apartment +
+        return "Client{" + getId() +
+                ", " + getFirst_name() +
+                ", " + getLast_name() +
+                ", " + getPhone_number() +
+                ", " + getCity() +
+                ", " + getDistrict() +
+                ", " + getStreet() +
+                ", " + getHouse() +
+                ", " + getApartment() +
                 '}';
     }
 }

@@ -8,7 +8,7 @@ public class Delete {
     public static void runSQLDeleteClient(Connection conn, int id){
         try {
             String request = "DELETE FROM \"Order\" WHERE \"ID_client\" = " + id + "; " +
-                    "DELETE FROM \"Client\" WHERE \"ID\" = " + id + ";";
+                    "DELETE FROM client WHERE id = " + id + ";";
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {

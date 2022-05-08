@@ -1,9 +1,6 @@
 package com.onlinestore.onlinestoresql.model.requestsSQL;
 
-import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Status;
+import com.onlinestore.onlinestoresql.model.itemsSQL.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -70,6 +67,22 @@ public class Select {
             System.out.println("select ERROR: " + e.getMessage());
         }
         return obsListStatus;
+    }
+
+    public static ObservableList<City> runSQLSelectCity(Connection conn) {
+        ObservableList<City> obsListCity = FXCollections.observableArrayList();
+        try {
+            String request = "SELECT * FROM city";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                obsListCity.add(new City(rs.getInt("ID"),
+                        rs.getString("name")));
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return obsListCity;
     }
 
     public static ObservableList<Order> runSQLSelectOrders(Connection conn) {
