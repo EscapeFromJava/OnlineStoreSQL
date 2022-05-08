@@ -1,5 +1,6 @@
 package com.onlinestore.onlinestoresql.controller;
 
+import com.onlinestore.onlinestoresql.MainApplication;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
@@ -12,17 +13,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -33,8 +38,6 @@ import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDele
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInsertMakeOrder;
 
 public class MainController {
-    @FXML
-    ComboBox<String> comboBoxStatus;
     @FXML
     DatePicker datePickerCalendar;
     @FXML
@@ -89,11 +92,6 @@ public class MainController {
 
     public void initComboBoxStatus() {
         obsListStatus = Select.runSQLSelectStatus(conn);
-        ObservableList<String> obsListOnlyStatus = FXCollections.observableArrayList();
-        for (Status s : obsListStatus) {
-            obsListOnlyStatus.add(s.getStatus());
-        }
-        comboBoxStatus.setItems(obsListOnlyStatus);
     }
 
     public void initTableClients() {
@@ -143,27 +141,73 @@ public class MainController {
 
     public void initTableOrders() {
         obsListOrders = Select.runSQLSelectOrders(conn);
+        ObservableList<String> obsListOnlyStatus = FXCollections.observableArrayList(obsListStatus.stream().map(x -> x.getStatus()).toList());
 
         TableColumn<Order, Integer> colOrderId = new TableColumn<>("Order_ID");
         TableColumn<Order, String> colClientFIO = new TableColumn<>("Client_FIO");
         TableColumn<Order, String> colProductName = new TableColumn<>("Product_Name");
         TableColumn<Order, String> colOrderDate = new TableColumn<>("Order_date");
-        TableColumn<Order, String> colStatus = new TableColumn<>("Status");
 
         tblViewOrders.getColumns().clear();
-        tblViewOrders.getColumns().addAll(colOrderId, colClientFIO, colProductName, colOrderDate, colStatus);
+        tblViewOrders.getColumns().addAll(colOrderId, colClientFIO, colProductName, colOrderDate);
         tblViewOrders.setItems(obsListOrders);
 
         colOrderId.setCellValueFactory(new PropertyValueFactory<Order, Integer>("order_id"));
         colClientFIO.setCellValueFactory(el -> el.getValue().client_fioProperty());
         colProductName.setCellValueFactory(el -> el.getValue().product_nameProperty());
         colOrderDate.setCellValueFactory(el -> el.getValue().order_dateProperty());
-        colStatus.setCellValueFactory(el -> el.getValue().statusProperty());
+
+        TableColumn<Order, String> colStatus = new TableColumn<>("Status");
+        tblViewOrders.getColumns().add(colStatus);
+        colStatus.setCellFactory(new Callback<TableColumn<Order, String>, TableCell<Order, String>>() {
+            @Override
+            public TableCell<Order, String> call(final TableColumn<Order, String> param) {
+                final TableCell<Order, String> cell = new TableCell<Order, String>() {
+                    private final ComboBox comboBoxStatus = new ComboBox();
+
+                    {
+                        comboBoxStatus.setItems(obsListOnlyStatus);
+                    }
+
+                    @Override
+                    public void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(comboBoxStatus);
+                            comboBoxStatus.setValue(item);
+                            comboBoxStatus.setOnAction(event -> {
+                                Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
+                                if (selectOrder != null && comboBoxStatus.isFocused()) {
+                                    // todo
+                                    //  некореектно работает выполнение запроса:
+                                    //  выбрать можно одну строку, а комбо бокс - в другой строке.
+                                    //  либо переделать выбор комбобокса - либо лочить кнопка
+                                    int idStatus = obsListStatus.stream().filter(x -> x.getStatus().equals(comboBoxStatus.getValue())).findFirst().get().getId();
+                                    Update.runSQLUpdateStatus(conn, idStatus, selectOrder.getOrder_id());
+                                }
+                            });
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+
+        colStatus.setCellValueFactory(order ->
+
+        {
+            return order.getValue().statusProperty();
+        });
 
         TableColumn<Order, Void> colButtonDelete = new TableColumn<>("Delete");
-        tblViewOrders.getColumns().add(colButtonDelete);
+        tblViewOrders.getColumns().
 
-        for (TableColumn currentColumn : tblViewOrders.getColumns())
+                add(colButtonDelete);
+
+        for (
+                TableColumn currentColumn : tblViewOrders.getColumns())
             currentColumn.setStyle("-fx-alignment: CENTER;");
 
         colButtonDelete.setCellFactory(new Callback<>() {
@@ -213,9 +257,7 @@ public class MainController {
         if (tblViewOrders.getSelectionModel().getSelectedItem() != null) {
             Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
             String newDate = datePickerCalendar.getValue() + " " + textFieldTime.getText();
-            int newStatus = obsListStatus.get(comboBoxStatus.getSelectionModel().getSelectedIndex()).getId();
             Update.runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
-            Update.runSQLUpdateStatus(conn, newStatus, selectOrder.getOrder_id());
             initTableOrders();
         }
     }
@@ -226,9 +268,6 @@ public class MainController {
             LocalDate localDate = LocalDate.parse(selectOrder.getOrder_date().substring(0, 10));
             datePickerCalendar.setValue(localDate);
             textFieldTime.setText(selectOrder.getOrder_date().substring(11));
-        }
-        if (selectOrder.getStatus() != null) {
-            comboBoxStatus.setValue(selectOrder.getStatus());
         }
     }
 
@@ -273,13 +312,25 @@ public class MainController {
     }
 
     public void updateAllTables() {
+        initComboBoxStatus();
         initTableClients();
         initTableProducts();
         initTableOrders();
-        initComboBoxStatus();
     }
 
     public void onButtonRefreshAllClick() {
         updateAllTables();
+    }
+
+    public void onButtonBasketClick() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/basket-view.fxml"));
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.setTitle("Basket");
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
