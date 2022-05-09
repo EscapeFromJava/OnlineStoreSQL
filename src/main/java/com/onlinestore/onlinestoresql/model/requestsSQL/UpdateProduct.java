@@ -4,39 +4,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Update {
-    public static void runSQLUpdateDate(Connection conn, String date, int id) {
+public class UpdateProduct {
+    public static void runSQLUpdateProductName(Connection conn, String newName, int id) {
         try {
-            String request = "UPDATE orders SET order_date = '" + date + "' WHERE id = " + id + "; ";
+            String request = "UPDATE product SET name = '" + newName + "' WHERE id = " + id + "; ";
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {
             System.out.println("update ERROR: " + e.getMessage());
         }
     }
-    public static void runSQLUpdateStatus(Connection conn, int status, int id) {
+    public static void runSQLUpdateProductPrice(Connection conn, double newPrice, int id) {
         try {
-            String request = "UPDATE orders SET status = " + status + " WHERE id = " + id + "; ";
+            String request = "UPDATE product SET price = " + newPrice + " WHERE id = " + id + "; ";
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {
             System.out.println("update ERROR: " + e.getMessage());
         }
     }
-
-    public static void runSQLUpdateCity(Connection conn, String newName, int id) {
+    public static void runSQLUpdateProductVolume(Connection conn, int newVolume, int id) {
         try {
-            String request = "UPDATE city SET name = '" + newName + "' WHERE id = " + id + "; ";
-            PreparedStatement statement = conn.prepareStatement(request);
-            statement.execute();
-        } catch (SQLException e) {
-            System.out.println("update ERROR: " + e.getMessage());
-        }
-    }
-
-    public static void runSQLUpdateBrand(Connection conn, String newBrand, int id) {
-        try {
-            String request = "UPDATE brand SET brand = '" + newBrand + "' WHERE id = " + id + "; ";
+            String request = "UPDATE product SET volume = " + newVolume + " WHERE id = " + id + "; ";
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {
@@ -44,9 +33,18 @@ public class Update {
         }
     }
 
-    public static void runSQLUpdateCategory(Connection conn, String newCategory, int id) {
+    public static void runSQLUpdateProductBrand(Connection conn, String newBrand, int id) {
         try {
-            String request = "UPDATE category SET category = '" + newCategory + "' WHERE id = " + id + "; ";
+            String request = "UPDATE product SET brand = (SELECT id FROM brand WHERE brand = '" + newBrand + "') WHERE id = " + id + "; ";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("update ERROR: " + e.getMessage());
+        }
+    }
+    public static void runSQLUpdateProductCategory(Connection conn, String newCategory, int id) {
+        try {
+            String request = "UPDATE product SET category = (SELECT id FROM category WHERE category = '" + newCategory + "') WHERE id = " + id + "; ";
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {

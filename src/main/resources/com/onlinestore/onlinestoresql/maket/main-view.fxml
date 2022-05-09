@@ -6,6 +6,8 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -52,7 +54,22 @@
       </TableView>
       <VBox alignment="CENTER" layoutX="780.0" layoutY="20.0" prefHeight="250.0" prefWidth="200.0" spacing="20.0" AnchorPane.rightAnchor="20.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#onButtonClientsClick" text="Clients" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#onButtonClientsClick" prefWidth="100.0" text="Clients">
+               <graphic>
+                  <ImageView>
+                     <Image requestedHeight="25" requestedWidth="25" url="@../img/clients.png" />
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#onButtonProductsClick" prefWidth="100.0" text="Products">
+               <graphic>
+                  <ImageView>
+                     <image>
+                        <Image requestedHeight="25" requestedWidth="25" url="@../img/products.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button mnemonicParsing="false" onAction="#onButtonRefreshAllClick" prefWidth="100.0" text="Refresh All" />
             <HBox alignment="CENTER" prefHeight="25.0" prefWidth="200.0" spacing="10.0">
                <children>

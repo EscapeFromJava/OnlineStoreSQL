@@ -24,6 +24,7 @@ import javafx.util.converter.IntegerStringConverter;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteClient;
@@ -35,13 +36,11 @@ public class ClientsController {
     @FXML
     AnchorPane paneAddClient;
     @FXML
-    Button btnClear;
-    @FXML
     ComboBox<String> comboBoxCity;
     @FXML
     TableView<Client> tblViewClients;
     @FXML
-    TextField textFieldFirstName, textFieldLastName, textFieldPhoneNumber, textFieldDistrict, textFieldStreet, textFieldHouse, textFieldApartment, textFieldAddCity;
+    TextField textFieldFirstName, textFieldLastName, textFieldPhoneNumber, textFieldDistrict, textFieldStreet, textFieldHouse, textFieldApartment;
     ObservableList<Client> obsListClients;
     ObservableList<City> obsListCity;
     ObservableList<String> obsListOnlyName;
@@ -58,7 +57,7 @@ public class ClientsController {
     }
 
     private void initComboBoxCity() {
-        obsListCity = runSQLSelectCity(conn);
+        obsListCity = runSQLSelectCity(conn).sorted(Comparator.comparingInt(City::getId));
         obsListOnlyName = FXCollections.observableArrayList(obsListCity.stream().map(x -> x.getName()).toList());
         comboBoxCity.setItems(obsListOnlyName);
         comboBoxCity.getSelectionModel().select(0);
@@ -137,6 +136,7 @@ public class ClientsController {
                                 if (selectClient != null && comboBoxCity.isFocused()) {
                                     String newCity = comboBoxCity.getValue().toString();
                                     runSQLUpdateClientCity(conn, newCity, selectClient.getId());
+                                    initTableClients();
                                 }
                             });
                         }
@@ -215,8 +215,10 @@ public class ClientsController {
 
     public void onButtonClearClick() {
         for (Node el : paneAddClient.getChildren()) {
-            if (el instanceof TextField)
+            if (el instanceof TextField) {
                 ((TextField) el).clear();
+                el.setStyle(null);
+            }
             if (el instanceof ComboBox<?>) {
                 ((ComboBox<?>) el).getSelectionModel().clearAndSelect(0);
             }
@@ -249,8 +251,8 @@ public class ClientsController {
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.setTitle("Cities");
             stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/add_city.png")));
-            stage.setMinWidth(300);
-            stage.setMinHeight(400);
+            stage.setMinWidth(320);
+            stage.setMinHeight(440);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 public void handle(WindowEvent we) {

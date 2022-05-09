@@ -114,12 +114,12 @@ public class MainController {
         colPrice.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
         colPrice.setOnEditCommit(event -> {
             Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-            Update.runSQLUpdatePrice(conn, event.getNewValue(), selectProduct.getId());
+            //Update.runSQLUpdatePrice(conn, event.getNewValue(), selectProduct.getId());
         });
         colVolume.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         colVolume.setOnEditCommit(event -> {
             Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-            Update.runSQLUpdateVolume(conn, event.getNewValue(), selectProduct.getId());
+            //Update.runSQLUpdateVolume(conn, event.getNewValue(), selectProduct.getId());
         });
     }
     private void initTableClients() {
@@ -132,6 +132,8 @@ public class MainController {
         tblViewClients.setItems(obsListClients);
 
         colClient.setCellValueFactory(cellData -> Bindings.createStringBinding( () -> cellData.getValue().getLast_name() + " " + cellData.getValue().getFirst_name()));
+
+        tblViewClients.getSortOrder().setAll(colClient);
     }
 
     public void initTableOrders() {
@@ -267,16 +269,7 @@ public class MainController {
     }
 
     public void onMenuItemAddProductClick() {
-        if (!textFieldAddProductName.getText().equals("") && !textFieldAddProductPrice.getText().equals("") && !textFieldAddProductVolume.getText().equals("")) {
-            String newProductName = textFieldAddProductName.getText();
-            double newProductPrice = Double.parseDouble(textFieldAddProductPrice.getText());
-            int newProductVolume = Integer.parseInt(textFieldAddProductVolume.getText());
-            Insert.runSQLInsertAddProduct(conn, newProductName, newProductPrice, newProductVolume);
-            initTableProducts();
-            textFieldAddProductName.clear();
-            textFieldAddProductPrice.clear();
-            textFieldAddProductVolume.clear();
-        }
+
     }
 
     public void onMenuItemDeleteProductClick() {
@@ -308,6 +301,27 @@ public class MainController {
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.setTitle("Clients");
             stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/clients.png")));
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent we) {
+                    updateTables();
+                }
+            });
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void onButtonProductsClick() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/products-view.fxml"));
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.setTitle("Products");
+            stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/products.png")));
             stage.setMinWidth(800);
             stage.setMinHeight(600);
             stage.initModality(Modality.APPLICATION_MODAL);

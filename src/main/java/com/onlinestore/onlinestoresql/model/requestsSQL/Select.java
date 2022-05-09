@@ -36,16 +36,16 @@ public class Select {
     public static ObservableList<Product> runSQLSelectProducts(Connection conn) {
         ObservableList<Product> obsListProducts = FXCollections.observableArrayList();
         try {
-            String request = "SELECT * FROM \"Product\"";
+            String request = "SELECT * FROM products_table";
             PreparedStatement statement = conn.prepareStatement(request);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                obsListProducts.add(new Product(rs.getInt("ID"),
-                        rs.getString("Name"),
-                        rs.getDouble("Price"),
-                        rs.getInt("Volume"),
-                        rs.getInt("Brand"),
-                        rs.getInt("Category")));
+                obsListProducts.add(new Product(rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getInt("volume"),
+                        rs.getString("brand"),
+                        rs.getString("category")));
             }
         } catch (SQLException e) {
             System.out.println("select ERROR: " + e.getMessage());
@@ -56,17 +56,49 @@ public class Select {
     public static ObservableList<Status> runSQLSelectStatus(Connection conn) {
         ObservableList<Status> obsListStatus = FXCollections.observableArrayList();
         try {
-            String request = "SELECT * FROM \"Status\"";
+            String request = "SELECT * FROM status";
             PreparedStatement statement = conn.prepareStatement(request);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                obsListStatus.add(new Status(rs.getInt("ID"),
-                        rs.getString("Status")));
+                obsListStatus.add(new Status(rs.getInt("id"),
+                        rs.getString("status")));
             }
         } catch (SQLException e) {
             System.out.println("select ERROR: " + e.getMessage());
         }
         return obsListStatus;
+    }
+
+    public static ObservableList<Brand> runSQLSelectBrand(Connection conn) {
+        ObservableList<Brand> obsListBrand = FXCollections.observableArrayList();
+        try {
+            String request = "SELECT * FROM brand";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                obsListBrand.add(new Brand(rs.getInt("id"),
+                                            rs.getString("brand")));
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return obsListBrand;
+    }
+
+    public static ObservableList<Category> runSQLSelectCategory(Connection conn) {
+        ObservableList<Category> obsListCategories = FXCollections.observableArrayList();
+        try {
+            String request = "SELECT * FROM category";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                obsListCategories.add(new Category(rs.getInt("id"),
+                                                    rs.getString("category")));
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return obsListCategories;
     }
 
     public static ObservableList<City> runSQLSelectCity(Connection conn) {
@@ -76,7 +108,7 @@ public class Select {
             PreparedStatement statement = conn.prepareStatement(request);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                obsListCity.add(new City(rs.getInt("ID"),
+                obsListCity.add(new City(rs.getInt("id"),
                         rs.getString("name")));
             }
         } catch (SQLException e) {
@@ -88,7 +120,7 @@ public class Select {
     public static ObservableList<Order> runSQLSelectOrders(Connection conn) {
         ObservableList<Order> obsListOrders = FXCollections.observableArrayList();
         try {
-            String request = "SELECT * FROM Orders_table";
+            String request = "SELECT * FROM orders_table";
             PreparedStatement statement = conn.prepareStatement(request);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {

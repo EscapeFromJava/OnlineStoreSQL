@@ -55,6 +55,7 @@ public class CitiesController {
             String newCity = textFieldNewCity.getText();
             runSQLInsertAddCity(conn, newCity);
             initTableCities();
+            textFieldNewCity.clear();
         }
     }
 

@@ -9,8 +9,8 @@ public class Product {
     SimpleStringProperty name = new SimpleStringProperty();
     SimpleDoubleProperty price = new SimpleDoubleProperty();
     SimpleIntegerProperty volume = new SimpleIntegerProperty();
-    SimpleIntegerProperty brand = new SimpleIntegerProperty();
-    SimpleIntegerProperty category = new SimpleIntegerProperty();
+    SimpleStringProperty brand = new SimpleStringProperty();
+    SimpleStringProperty category = new SimpleStringProperty();
 
     public int getId() {
         return id.get();
@@ -60,31 +60,39 @@ public class Product {
         this.volume.set(volume);
     }
 
-    public int getBrand() {
+    public String getBrand() {
         return brand.get();
     }
 
-    public SimpleIntegerProperty brandProperty() {
+    public SimpleStringProperty brandProperty() {
         return brand;
     }
 
-    public void setBrand(int brand) {
+    public void setBrand(String brand) {
         this.brand.set(brand);
     }
 
-    public int getCategory() {
+    public String getCategory() {
         return category.get();
     }
 
-    public SimpleIntegerProperty categoryProperty() {
+    public SimpleStringProperty categoryProperty() {
         return category;
     }
 
-    public void setCategory(int category) {
+    public void setCategory(String category) {
         this.category.set(category);
     }
 
-    public Product(int id, String name, double price, int volume, int brand, int category) {
+    public Product(String name, double price, int volume, String brand, String category) {
+        setName(name);
+        setPrice(price);
+        setVolume(volume);
+        setBrand(brand);
+        setCategory(category);
+    }
+
+    public Product(int id, String name, double price, int volume, String brand, String category) {
         setId(id);
         setName(name);
         setPrice(price);
