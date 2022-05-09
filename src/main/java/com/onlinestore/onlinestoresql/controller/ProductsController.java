@@ -261,8 +261,7 @@ public class ProductsController {
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.setTitle("Brands");
             stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/add_brand.png")));
-            stage.setMinWidth(320);
-            stage.setMinHeight(440);
+            stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 public void handle(WindowEvent we) {
@@ -282,8 +281,7 @@ public class ProductsController {
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.setTitle("Categories");
             stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/add_category.png")));
-            stage.setMinWidth(320);
-            stage.setMinHeight(440);
+            stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 public void handle(WindowEvent we) {

@@ -11,6 +11,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
+<?import javafx.scene.control.Tooltip?>
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.onlinestore.onlinestoresql.controller.ProductsController">
     <children>
         <TableView fx:id="tblViewProducts" editable="true" layoutX="14.0" layoutY="14.0" onMouseClicked="#onTableProductsClicked" prefHeight="430.0" prefWidth="770.0" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
@@ -31,6 +32,9 @@
                 <TextField fx:id="textFieldPrice" layoutX="172.0" promptText="Price" />
                 <TextField fx:id="textFieldVolume" layoutX="347.0" promptText="Volume" />
                 <Button layoutX="521.0" layoutY="26.0" mnemonicParsing="false" onAction="#onButtonAddProductClick">
+                    <tooltip>
+                        <Tooltip text = "Add product" />
+                    </tooltip>
                     <graphic>
                         <ImageView>
                             <Image requestedHeight="25" requestedWidth="25" url="@../img/add_product.png" />
@@ -38,6 +42,9 @@
                     </graphic>
                 </Button>
                 <Button layoutX="455.0" layoutY="61.0" mnemonicParsing="false" onAction="#onButtonClearClick">
+                    <tooltip>
+                        <Tooltip text = "Clear fields" />
+                    </tooltip>
                     <graphic>
                         <ImageView>
                             <Image requestedHeight="25" requestedWidth="25" url="@../img/clear.png" />
@@ -47,6 +54,9 @@
                 <ComboBox fx:id="comboBoxBrand" layoutY="66.0" prefWidth="150.0" />
                 <ComboBox fx:id="comboBoxCategory" layoutX="172.0" layoutY="66.0" prefWidth="150.0" />
                 <Button layoutX="347.0" layoutY="62.0" mnemonicParsing="false" onAction="#onButtonAddBrandClick">
+                    <tooltip>
+                        <Tooltip text = "Add brand" />
+                    </tooltip>
                     <graphic>
                         <ImageView>
                             <image>
@@ -56,6 +66,9 @@
                     </graphic>
                 </Button>
                 <Button layoutX="401.0" layoutY="61.0" mnemonicParsing="false" onAction="#onButtonAddCategoryClick">
+                    <tooltip>
+                        <Tooltip text = "Add category" />
+                    </tooltip>
                     <graphic>
                         <ImageView>
                             <image>

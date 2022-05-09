@@ -1,12 +1,15 @@
 package com.onlinestore.onlinestoresql.model.itemsSQL;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Order {
     SimpleIntegerProperty order_id = new SimpleIntegerProperty();
-    SimpleStringProperty client_fio = new SimpleStringProperty();
-    SimpleStringProperty product_name = new SimpleStringProperty();
+    SimpleIntegerProperty client = new SimpleIntegerProperty();
+    SimpleStringProperty product = new SimpleStringProperty();
+    SimpleIntegerProperty quantity = new SimpleIntegerProperty();
+    SimpleDoubleProperty price = new SimpleDoubleProperty();
     SimpleStringProperty order_date = new SimpleStringProperty();
     SimpleStringProperty status = new SimpleStringProperty();
 
@@ -22,28 +25,52 @@ public class Order {
         this.order_id.set(order_id);
     }
 
-    public String getClient_fio() {
-        return client_fio.get();
+    public int getClient() {
+        return client.get();
     }
 
-    public SimpleStringProperty client_fioProperty() {
-        return client_fio;
+    public SimpleIntegerProperty clientProperty() {
+        return client;
     }
 
-    public void setClient_fio(String client_fio) {
-        this.client_fio.set(client_fio);
+    public void setClient(int client) {
+        this.client.set(client);
     }
 
-    public String getProduct_name() {
-        return product_name.get();
+    public String getProduct() {
+        return product.get();
     }
 
-    public SimpleStringProperty product_nameProperty() {
-        return product_name;
+    public SimpleStringProperty productProperty() {
+        return product;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name.set(product_name);
+    public void setProduct(String product) {
+        this.product.set(product);
+    }
+
+    public int getQuantity() {
+        return quantity.get();
+    }
+
+    public SimpleIntegerProperty quantityProperty() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity.set(quantity);
+    }
+
+    public double getPrice() {
+        return price.get();
+    }
+
+    public SimpleDoubleProperty priceProperty() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price.set(price);
     }
 
     public String getOrder_date() {
@@ -70,16 +97,18 @@ public class Order {
         this.status.set(status);
     }
 
-    public Order(int order_id, String client_fio, String product_name, String order_date, String status) {
+    public Order(int order_id, int client, String product, int quantity, double price, String order_date, String status) {
         setOrder_id(order_id);
-        setClient_fio(client_fio);
-        setProduct_name(product_name);
+        setClient(client);
+        setProduct(product);
+        setQuantity(quantity);
+        setPrice(price);
         setOrder_date(order_date);
         setStatus(status);
     }
 
     @Override
     public String toString() {
-        return "Orders{" + order_id + " | " + client_fio + " | " + product_name + " | " + order_date + " | " + status + '}';
+        return "Orders{" + order_id + " | " + client + " | " + product + " | " + quantity + " | " + price + " | " + order_date + " | " + status + '}';
     }
 }

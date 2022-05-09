@@ -81,5 +81,6 @@
          </children>
       </VBox>
       <Button layoutX="237.0" layoutY="123.0" mnemonicParsing="false" onAction="#onButtonOrderClick" prefWidth="100.0" text="Order" />
+      <Button layoutX="261.0" layoutY="180.0" mnemonicParsing="false" onAction="#onButtonSearchClick" text="Search" />
    </children>
 </AnchorPane>

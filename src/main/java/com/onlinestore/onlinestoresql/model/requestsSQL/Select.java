@@ -117,18 +117,20 @@ public class Select {
         return obsListCity;
     }
 
-    public static ObservableList<Order> runSQLSelectOrders(Connection conn) {
+    public static ObservableList<Order> runSQLSelectOrders(Connection conn, int idClient) {
         ObservableList<Order> obsListOrders = FXCollections.observableArrayList();
         try {
-            String request = "SELECT * FROM orders_table";
+            String request = "SELECT * FROM client_orders WHERE client = " + idClient + ";";
             PreparedStatement statement = conn.prepareStatement(request);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                obsListOrders.add(new Order(rs.getInt("Order_ID"),
-                        rs.getString("Client_FIO"),
-                        rs.getString("Product_Name"),
-                        rs.getString("Order_date"),
-                        rs.getString("Status")));
+                obsListOrders.add(new Order(rs.getInt("order_id"),
+                                            rs.getInt("client"),
+                                            rs.getString("product"),
+                                            rs.getInt("quantity"),
+                                            rs.getDouble("price"),
+                                            rs.getString("order_date"),
+                                            rs.getString("status")));
             }
         } catch (SQLException e) {
             System.out.println("select ERROR: " + e.getMessage());

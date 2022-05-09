@@ -55,6 +55,8 @@ public class MainController {
     ObservableList<Product> obsListProducts;
     ObservableList<Status> obsListStatus;
 
+    ObservableList<String> obsListOnlyStatus;
+
     public void initialize() {
         conn = MainApplication.conn;
         updateTables();
@@ -136,22 +138,25 @@ public class MainController {
         tblViewClients.getSortOrder().setAll(colClient);
     }
 
-    public void initTableOrders() {
-        obsListOrders = Select.runSQLSelectOrders(conn);
-        ObservableList<String> obsListOnlyStatus = FXCollections.observableArrayList(obsListStatus.stream().map(x -> x.getStatus()).toList());
+    public void initTableOrders(int idClient) {
+        initComboBoxStatus();
+        obsListOrders = Select.runSQLSelectOrders(conn, idClient);
+        obsListOnlyStatus = FXCollections.observableArrayList(obsListStatus.stream().map(x -> x.getStatus()).toList());
 
-        TableColumn<Order, Integer> colOrderId = new TableColumn<>("Order_ID");
-        TableColumn<Order, String> colClientFIO = new TableColumn<>("Client_FIO");
-        TableColumn<Order, String> colProductName = new TableColumn<>("Product_Name");
-        TableColumn<Order, String> colOrderDate = new TableColumn<>("Order_date");
+        TableColumn<Order, Integer> colOrderId = new TableColumn<>("Order ID");
+        TableColumn<Order, String> colProduct = new TableColumn<>("Product");
+        TableColumn<Order, Integer> colQuantity = new TableColumn<>("Quantity");
+        TableColumn<Order, Double> colPrice = new TableColumn<>("Price");
+        TableColumn<Order, String> colOrderDate = new TableColumn<>("Order date");
 
         tblViewOrders.getColumns().clear();
-        tblViewOrders.getColumns().addAll(colOrderId, colClientFIO, colProductName, colOrderDate);
+        tblViewOrders.getColumns().addAll(colOrderId, colProduct, colQuantity, colPrice, colOrderDate);
         tblViewOrders.setItems(obsListOrders);
 
         colOrderId.setCellValueFactory(new PropertyValueFactory<Order, Integer>("order_id"));
-        colClientFIO.setCellValueFactory(el -> el.getValue().client_fioProperty());
-        colProductName.setCellValueFactory(el -> el.getValue().product_nameProperty());
+        colProduct.setCellValueFactory(el -> el.getValue().productProperty());
+        colQuantity.setCellValueFactory(new PropertyValueFactory<Order, Integer>("quantity"));
+        colPrice.setCellValueFactory(new PropertyValueFactory<Order, Double>("price"));
         colOrderDate.setCellValueFactory(el -> el.getValue().order_dateProperty());
 
         TableColumn<Order, String> colStatus = new TableColumn<>("Status");
@@ -177,10 +182,6 @@ public class MainController {
                             comboBoxStatus.setOnAction(event -> {
                                 Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
                                 if (selectOrder != null && comboBoxStatus.isFocused()) {
-                                    // todo
-                                    //  некореектно работает выполнение запроса:
-                                    //  выбрать можно одну строку, а комбо бокс - в другой строке.
-                                    //  либо переделать выбор комбобокса - либо лочить кнопка
                                     int idStatus = obsListStatus.stream().filter(x -> x.getStatus().equals(comboBoxStatus.getValue())).findFirst().get().getId();
                                     Update.runSQLUpdateStatus(conn, idStatus, selectOrder.getOrder_id());
                                 }
@@ -198,7 +199,7 @@ public class MainController {
             return order.getValue().statusProperty();
         });
 
-        TableColumn<Order, Void> colButtonDelete = new TableColumn<>("Delete");
+        /*TableColumn<Order, Void> colButtonDelete = new TableColumn<>("Delete");
         tblViewOrders.getColumns().
 
                 add(colButtonDelete);
@@ -236,7 +237,10 @@ public class MainController {
                 };
                 return cell;
             }
-        });
+        });*/
+
+        for (TableColumn currentColumn : tblViewOrders.getColumns())
+            currentColumn.setStyle("-fx-alignment: CENTER;");
 
         tblViewOrders.getSortOrder().setAll(colOrderId);
     }
@@ -246,7 +250,7 @@ public class MainController {
         Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
         if (selectClient != null && selectProduct != null) {
             runSQLInsertMakeOrder(conn, selectClient.getId(), selectProduct.getId());
-            initTableOrders();
+            //initTableOrders();
         }
     }
 
@@ -255,7 +259,7 @@ public class MainController {
             Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
             String newDate = datePickerCalendar.getValue() + " " + textFieldTime.getText();
             Update.runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
-            initTableOrders();
+            //initTableOrders();
         }
     }
 
@@ -277,14 +281,13 @@ public class MainController {
         if (selectProduct != null) {
             Delete.runSQLDeleteProduct(conn, selectProduct.getId());
             initTableProducts();
-            initTableOrders();
+            //initTableOrders();
         }
     }
 
     public void updateTables() {
         initComboBoxStatus();
         initTableProducts();
-        initTableOrders();
         initTableClients();
     }
 
@@ -334,5 +337,10 @@ public class MainController {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void onButtonSearchClick(ActionEvent actionEvent) {
+        int idClient = tblViewClients.getSelectionModel().getSelectedItem().getId();
+        initTableOrders(idClient);
     }
 }

@@ -251,8 +251,7 @@ public class ClientsController {
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.setTitle("Cities");
             stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/add_city.png")));
-            stage.setMinWidth(320);
-            stage.setMinHeight(440);
+            stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 public void handle(WindowEvent we) {
