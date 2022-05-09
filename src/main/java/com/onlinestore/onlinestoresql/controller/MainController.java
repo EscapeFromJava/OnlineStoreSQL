@@ -13,6 +13,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -21,7 +22,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DoubleStringConverter;
@@ -54,7 +57,7 @@ public class MainController {
 
     public void initialize() {
         conn = MainApplication.conn;
-        updateAllTables();
+        updateTables();
         initializeDatePicker();
     }
 
@@ -285,7 +288,7 @@ public class MainController {
         }
     }
 
-    public void updateAllTables() {
+    public void updateTables() {
         initComboBoxStatus();
         initTableProducts();
         initTableOrders();
@@ -295,7 +298,7 @@ public class MainController {
 
 
     public void onButtonRefreshAllClick() {
-        updateAllTables();
+        updateTables();
     }
 
     public void onButtonClientsClick() {
@@ -304,8 +307,15 @@ public class MainController {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/clients-view.fxml"));
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.setTitle("Clients");
+            stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/clients.png")));
             stage.setMinWidth(800);
             stage.setMinHeight(600);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent we) {
+                    updateTables();
+                }
+            });
             stage.showAndWait();
         } catch (IOException e) {
             System.out.println(e.getMessage());

@@ -41,4 +41,13 @@ public class Update {
             System.out.println("update ERROR: " + e.getMessage());
         }
     }
+    public static void runSQLUpdateCity(Connection conn, String newName, int id) {
+        try {
+            String request = "UPDATE city SET name = '" + newName + "' WHERE id = " + id + "; ";
+            PreparedStatement statement = conn.prepareStatement(request);
+            statement.execute();
+        } catch (SQLException e) {
+            System.out.println("update ERROR: " + e.getMessage());
+        }
+    }
 }

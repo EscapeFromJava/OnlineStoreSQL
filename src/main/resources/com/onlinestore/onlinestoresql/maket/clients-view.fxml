@@ -29,19 +29,7 @@
             <TextField fx:id="textFieldFirstName" promptText="First name" />
             <TextField fx:id="textFieldLastName" layoutX="172.0" promptText="Last name" />
             <TextField fx:id="textFieldPhoneNumber" layoutX="347.0" promptText="Phone number" />
-            <ComboBox fx:id="comboBoxCity" layoutY="44.0" prefWidth="150.0">
-               <contextMenu>
-                  <ContextMenu>
-                    <items>
-                      <MenuItem mnemonicParsing="false" onAction="#onMenuItemAddCityClick" text="Add">
-                           <graphic>
-                              <TextField fx:id="textFieldAddCity" />
-                           </graphic>
-                        </MenuItem>
-                        <MenuItem mnemonicParsing="false" onAction="#onMenuItemDeleteCityClick" text="Delete" />
-                    </items>
-                  </ContextMenu>
-               </contextMenu></ComboBox>
+            <ComboBox fx:id="comboBoxCity" layoutY="44.0" prefWidth="150.0" />
             <TextField fx:id="textFieldDistrict" layoutX="172.0" layoutY="44.0" promptText="District" />
             <TextField fx:id="textFieldStreet" layoutX="347.0" layoutY="44.0" promptText="Street" />
             <TextField fx:id="textFieldHouse" layoutX="172.0" layoutY="93.0" promptText="House" />
@@ -57,6 +45,15 @@
                <graphic>
                   <ImageView>
                      <Image requestedHeight="25" requestedWidth="25" url="@../img/clear.png" />
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="54.0" layoutY="88.0" mnemonicParsing="false" onAction="#onButtonAddCityClick">
+               <graphic>
+                  <ImageView>
+                     <image>
+                        <Image requestedHeight="25.0" requestedWidth="25.0" url="@../img/add_city.png" />
+                     </image>
                   </ImageView>
                </graphic>
             </Button>

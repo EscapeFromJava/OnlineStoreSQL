@@ -3,6 +3,7 @@ package com.onlinestore.onlinestoresql;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class MainApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Online Store");
+        stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/logo.png")));
         stage.setScene(scene);
         stage.setMinWidth(1000);
         stage.setMinHeight(600);

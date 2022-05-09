@@ -3,29 +3,30 @@ package com.onlinestore.onlinestoresql.controller;
 import com.onlinestore.onlinestoresql.MainApplication;
 import com.onlinestore.onlinestoresql.model.itemsSQL.City;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
-import com.onlinestore.onlinestoresql.model.requestsSQL.Delete;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Select;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.util.regex.Pattern;
 
-import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteCity;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteClient;
-import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInsertAddCity;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInsertAddClient;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Select.runSQLSelectCity;
 import static com.onlinestore.onlinestoresql.model.requestsSQL.UpdateClient.*;
@@ -48,15 +49,10 @@ public class ClientsController {
 
     public void initialize() {
         conn = MainApplication.conn;
-        initializeTables();
-/*        Image icon = new Image(getClass().getResourceAsStream("/com/onlinestore/onlinestoresql/img/clear.png"));
-        ImageView imageView = new ImageView(icon);
-        imageView.setFitHeight(25);
-        imageView.setFitWidth(25);
-        btnClear.setGraphic(imageView);*/
+        updateTables();
     }
 
-    private void initializeTables() {
+    private void updateTables() {
         initComboBoxCity();
         initTableClients();
     }
@@ -246,20 +242,24 @@ public class ClientsController {
             textFieldApartment.setText(String.valueOf(selectClient.getApartment()));
         }
     }
-//todo мне не нравится
-    public void onMenuItemAddCityClick() {
-        if (!textFieldAddCity.getText().equals("")) {
-            String newCity = textFieldAddCity.getText();
-            runSQLInsertAddCity(conn, newCity);
-            initializeTables();
-        }
-    }
-
-    public void onMenuItemDeleteCityClick() {
-        String selectCity = comboBoxCity.getSelectionModel().getSelectedItem();
-        if (selectCity != null) {
-            runSQLDeleteCity(conn, selectCity);
-            initializeTables();
+    public void onButtonAddCityClick() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/сities-view.fxml"));
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.setTitle("Cities");
+            stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/add_city.png")));
+            stage.setMinWidth(300);
+            stage.setMinHeight(400);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent we) {
+                    updateTables();
+                }
+            });
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
