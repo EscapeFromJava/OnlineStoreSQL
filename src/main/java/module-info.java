@@ -10,4 +10,5 @@ module com.onlinestore.onlinestoresql {
     exports com.onlinestore.onlinestoresql.model.requestsSQL;
     exports com.onlinestore.onlinestoresql.controller;
     exports com.onlinestore.onlinestoresql.model.itemsSQL;
+    exports com.onlinestore.onlinestoresql.model.entity;
 }

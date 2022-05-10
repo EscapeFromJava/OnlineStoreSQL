@@ -38,6 +38,6 @@ public class Category {
 
     @Override
     public String toString() {
-        return "Category{" + id + " " + category + "}";
+        return getCategory();
     }
 }

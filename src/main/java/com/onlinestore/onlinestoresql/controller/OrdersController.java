@@ -1,15 +1,9 @@
 package com.onlinestore.onlinestoresql.controller;
 
 import com.onlinestore.onlinestoresql.MainApplication;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
-import com.onlinestore.onlinestoresql.model.itemsSQL.Status;
-import com.onlinestore.onlinestoresql.model.requestsSQL.Delete;
-import com.onlinestore.onlinestoresql.model.requestsSQL.Insert;
+import com.onlinestore.onlinestoresql.model.itemsSQL.*;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Select;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Update;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,138 +13,98 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
-import javafx.util.converter.DoubleStringConverter;
-import javafx.util.converter.IntegerStringConverter;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteOrder;
-import static com.onlinestore.onlinestoresql.model.requestsSQL.Insert.runSQLInsertMakeOrder;
+import static com.onlinestore.onlinestoresql.model.requestsSQL.Select.runSQLSelectClients;
 
-public class MainController {
-    @FXML
-    DatePicker datePickerCalendar;
+public class OrdersController {
     @FXML
     TableView<Client> tblViewClients;
     @FXML
     TableView<Order> tblViewOrders;
-    @FXML
-    TableView<Product> tblViewProducts;
-    @FXML
-    TextField textFieldTime, textFieldAddProductName, textFieldAddProductPrice, textFieldAddProductVolume;
     Connection conn;
     ObservableList<Client> obsListClients;
     ObservableList<Order> obsListOrders;
-    ObservableList<Product> obsListProducts;
     ObservableList<Status> obsListStatus;
-
-    ObservableList<String> obsListOnlyStatus;
 
     public void initialize() {
         conn = MainApplication.conn;
         updateTables();
-        initializeDatePicker();
-    }
-
-    public void initializeDatePicker() {
-        StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
-            DateTimeFormatter dateFormatter =
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-            @Override
-            public String toString(LocalDate date) {
-                if (date != null) {
-                    return dateFormatter.format(date);
-                } else {
-                    return "";
-                }
-            }
-
-            @Override
-            public LocalDate fromString(String string) {
-                if (string != null && !string.isEmpty()) {
-                    return LocalDate.parse(string, dateFormatter);
-                } else {
-                    return null;
-                }
-            }
-        };
-        datePickerCalendar.setConverter(converter);
     }
 
     public void initComboBoxStatus() {
         obsListStatus = Select.runSQLSelectStatus(conn);
     }
 
-
-
-    public void initTableProducts() {
-        obsListProducts = Select.runSQLSelectProducts(conn);
-
-        TableColumn<Product, String> colName = new TableColumn<>("Name");
-        TableColumn<Product, Double> colPrice = new TableColumn<>("Price");
-        TableColumn<Product, Integer> colVolume = new TableColumn<>("Volume");
-
-        tblViewProducts.getColumns().clear();
-        tblViewProducts.getColumns().addAll(colName, colPrice, colVolume);
-        tblViewProducts.setItems(obsListProducts);
-
-        for (TableColumn currentColumn : tblViewProducts.getColumns())
-            currentColumn.setStyle("-fx-alignment: CENTER;");
-
-        colName.setCellValueFactory(el -> el.getValue().nameProperty());
-        colPrice.setCellValueFactory(new PropertyValueFactory<Product, Double>("price"));
-        colVolume.setCellValueFactory(new PropertyValueFactory<Product, Integer>("volume"));
-
-        colPrice.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-        colPrice.setOnEditCommit(event -> {
-            Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-            //Update.runSQLUpdatePrice(conn, event.getNewValue(), selectProduct.getId());
-        });
-        colVolume.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-        colVolume.setOnEditCommit(event -> {
-            Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-            //Update.runSQLUpdateVolume(conn, event.getNewValue(), selectProduct.getId());
-        });
-    }
     private void initTableClients() {
-        obsListClients = Select.runSQLSelectClients(conn);
+        obsListClients = runSQLSelectClients(conn);
 
-        TableColumn<Client, String> colClient = new TableColumn<>("Client");
+        TableColumn<Client, Integer> colId = new TableColumn<>("ID");
+        TableColumn<Client, String> colLastName = new TableColumn<>("Last name");
+        TableColumn<Client, String> colFirstName = new TableColumn<>("First name");
 
         tblViewClients.getColumns().clear();
-        tblViewClients.getColumns().add(colClient);
+        tblViewClients.getColumns().addAll(colId, colLastName, colFirstName);
         tblViewClients.setItems(obsListClients);
 
-        colClient.setCellValueFactory(cellData -> Bindings.createStringBinding( () -> cellData.getValue().getLast_name() + " " + cellData.getValue().getFirst_name()));
+        colId.setCellValueFactory(new PropertyValueFactory<Client, Integer>("id"));
+        colLastName.setCellValueFactory(el -> el.getValue().last_nameProperty());
+        colFirstName.setCellValueFactory(el -> el.getValue().first_nameProperty());
 
-        tblViewClients.getSortOrder().setAll(colClient);
+        tblViewClients.getSortOrder().setAll(colId);
+        tblViewClients.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    if (mouseEvent.getClickCount() == 2) {
+                        Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
+                        obsListOrders = Select.runSQLSelectOrders(conn, selectClient.getId());
+                        initTableOrders();
+                    }
+                }
+            }
+        });
     }
 
-    public void initTableOrders(int idClient) {
+    public void initTableOrders() {
         initComboBoxStatus();
-        obsListOrders = Select.runSQLSelectOrders(conn, idClient);
-        obsListOnlyStatus = FXCollections.observableArrayList(obsListStatus.stream().map(x -> x.getStatus()).toList());
+        ObservableList<String> obsListOnlyStatus = FXCollections.observableArrayList(obsListStatus.stream().map(x -> x.getStatus()).toList());
 
-        TableColumn<Order, Integer> colOrderId = new TableColumn<>("Order ID");
+        TableColumn<Order, Integer> colOrderId = new TableColumn<>("ID");
         TableColumn<Order, String> colProduct = new TableColumn<>("Product");
-        TableColumn<Order, Integer> colQuantity = new TableColumn<>("Quantity");
         TableColumn<Order, Double> colPrice = new TableColumn<>("Price");
+        TableColumn<Order, Integer> colQuantity = new TableColumn<>("Quantity");
         TableColumn<Order, String> colOrderDate = new TableColumn<>("Order date");
+        TableColumn<Order, String> colStatus = new TableColumn<>("Status");
+        TableColumn<Order, Void> colButtonDelete = new TableColumn<>("Del");
+        colOrderId.setMinWidth(40);
+        colOrderId.setMaxWidth(40);
+        colProduct.setMinWidth(300);
+        colPrice.setMinWidth(120);
+        colPrice.setMaxWidth(120);
+        colQuantity.setMinWidth(80);
+        colQuantity.setMaxWidth(80);
+        colOrderDate.setMinWidth(200);
+        colOrderDate.setMaxWidth(200);
+        colStatus.setMinWidth(100);
+        colStatus.setMaxWidth(100);
+        colButtonDelete.setMinWidth(40);
+        colButtonDelete.setMaxWidth(40);
+
 
         tblViewOrders.getColumns().clear();
-        tblViewOrders.getColumns().addAll(colOrderId, colProduct, colQuantity, colPrice, colOrderDate);
+        tblViewOrders.getColumns().addAll(colOrderId, colProduct, colPrice, colQuantity, colOrderDate, colStatus, colButtonDelete);
         tblViewOrders.setItems(obsListOrders);
 
         colOrderId.setCellValueFactory(new PropertyValueFactory<Order, Integer>("order_id"));
@@ -158,9 +112,6 @@ public class MainController {
         colQuantity.setCellValueFactory(new PropertyValueFactory<Order, Integer>("quantity"));
         colPrice.setCellValueFactory(new PropertyValueFactory<Order, Double>("price"));
         colOrderDate.setCellValueFactory(el -> el.getValue().order_dateProperty());
-
-        TableColumn<Order, String> colStatus = new TableColumn<>("Status");
-        tblViewOrders.getColumns().add(colStatus);
         colStatus.setCellFactory(new Callback<TableColumn<Order, String>, TableCell<Order, String>>() {
             @Override
             public TableCell<Order, String> call(final TableColumn<Order, String> param) {
@@ -194,30 +145,19 @@ public class MainController {
         });
 
         colStatus.setCellValueFactory(order ->
-
         {
             return order.getValue().statusProperty();
         });
-
-        /*TableColumn<Order, Void> colButtonDelete = new TableColumn<>("Delete");
-        tblViewOrders.getColumns().
-
-                add(colButtonDelete);
-
-        for (
-                TableColumn currentColumn : tblViewOrders.getColumns())
-            currentColumn.setStyle("-fx-alignment: CENTER;");
-
         colButtonDelete.setCellFactory(new Callback<>() {
             @Override
             public TableCell<Order, Void> call(final TableColumn<Order, Void> param) {
                 final TableCell<Order, Void> cell = new TableCell<Order, Void>() {
-                    private final Button btn = new Button();
+                    private final Button btnDelete = new Button();
 
                     {
                         Image icon = new Image(getClass().getResourceAsStream("/com/onlinestore/onlinestoresql/img/trash.png"));
-                        btn.setGraphic(new ImageView(icon));
-                        btn.setOnAction((ActionEvent event) -> {
+                        btnDelete.setGraphic(new ImageView(icon));
+                        btnDelete.setOnAction((ActionEvent event) -> {
                             Order currentOrder = getTableView().getItems().get(getIndex());
                             obsListOrders.remove(currentOrder);
                             runSQLDeleteOrder(conn, currentOrder.getOrder_id());
@@ -231,13 +171,13 @@ public class MainController {
                         if (empty) {
                             setGraphic(null);
                         } else {
-                            setGraphic(btn);
+                            setGraphic(btnDelete);
                         }
                     }
                 };
                 return cell;
             }
-        });*/
+        });
 
         for (TableColumn currentColumn : tblViewOrders.getColumns())
             currentColumn.setStyle("-fx-alignment: CENTER;");
@@ -245,57 +185,19 @@ public class MainController {
         tblViewOrders.getSortOrder().setAll(colOrderId);
     }
 
-    public void onButtonOrderClick() {
-        Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
-        Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-        if (selectClient != null && selectProduct != null) {
-            runSQLInsertMakeOrder(conn, selectClient.getId(), selectProduct.getId());
-            //initTableOrders();
-        }
-    }
-
-    public void onButtonChangeClick() {
-        if (tblViewOrders.getSelectionModel().getSelectedItem() != null) {
-            Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
-            String newDate = datePickerCalendar.getValue() + " " + textFieldTime.getText();
-            Update.runSQLUpdateDate(conn, newDate, selectOrder.getOrder_id());
-            //initTableOrders();
-        }
-    }
-
     public void onTableViewOrdersClicked() {
         Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
         if (selectOrder.getOrder_date() != null) {
-            LocalDate localDate = LocalDate.parse(selectOrder.getOrder_date().substring(0, 10));
-            datePickerCalendar.setValue(localDate);
-            textFieldTime.setText(selectOrder.getOrder_date().substring(11));
-        }
-    }
-
-    public void onMenuItemAddProductClick() {
-
-    }
-
-    public void onMenuItemDeleteProductClick() {
-        Product selectProduct = tblViewProducts.getSelectionModel().getSelectedItem();
-        if (selectProduct != null) {
-            Delete.runSQLDeleteProduct(conn, selectProduct.getId());
-            initTableProducts();
-            //initTableOrders();
         }
     }
 
     public void updateTables() {
         initComboBoxStatus();
-        initTableProducts();
         initTableClients();
     }
 
 
 
-    public void onButtonRefreshAllClick() {
-        updateTables();
-    }
 
     public void onButtonClientsClick() {
         try {
@@ -339,8 +241,28 @@ public class MainController {
         }
     }
 
-    public void onButtonSearchClick(ActionEvent actionEvent) {
-        int idClient = tblViewClients.getSelectionModel().getSelectedItem().getId();
-        initTableOrders(idClient);
+    public void onButtonNewOrderClick() {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/new-order-view.fxml"));
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.setTitle("Order");
+            stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/new_order.png")));
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                public void handle(WindowEvent we) {
+                    updateTables();
+                }
+            });
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void onButtonRefreshAllClick() {
+        updateTables();
     }
 }

@@ -53,6 +53,29 @@ public class Select {
         return obsListProducts;
     }
 
+    public static ObservableList<Product> runSQLSelectProductsByCategory(Connection conn, int idCategory) {
+        ObservableList<Product> obsListProducts = FXCollections.observableArrayList();
+        try {
+            String request = "SELECT * " +
+                             "FROM products_table " +
+                             "WHERE category = " +
+                                 "(SELECT category FROM category WHERE id = " + idCategory + ");";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                obsListProducts.add(new Product(rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getInt("volume"),
+                        rs.getString("brand"),
+                        rs.getString("category")));
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return obsListProducts;
+    }
+
     public static ObservableList<Status> runSQLSelectStatus(Connection conn) {
         ObservableList<Status> obsListStatus = FXCollections.observableArrayList();
         try {

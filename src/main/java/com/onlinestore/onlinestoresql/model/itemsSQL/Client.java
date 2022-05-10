@@ -147,15 +147,6 @@ public class Client {
 
     @Override
     public String toString() {
-        return "Client{" + getId() +
-                ", " + getFirst_name() +
-                ", " + getLast_name() +
-                ", " + getPhone_number() +
-                ", " + getCity() +
-                ", " + getDistrict() +
-                ", " + getStreet() +
-                ", " + getHouse() +
-                ", " + getApartment() +
-                '}';
+        return getLast_name() + " " + getFirst_name();
     }
 }

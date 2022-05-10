@@ -1,19 +1,27 @@
 package com.onlinestore.onlinestoresql.model.requestsSQL;
 
+import com.onlinestore.onlinestoresql.model.entity.ProductInBasket;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Product;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Insert {
-    public static void runSQLInsertMakeOrder(Connection conn, int id_client, int id_product) {
+    public static void runSQLInsertOrder(Connection conn, int id_client, ObservableList<ProductInBasket> obsListNewOrder) {
         try {
-            String request = "INSERT INTO orders (id_client, id_product, order_date, status) " +
-                    "VALUES (" + id_client + ", " + id_product + ", date_trunc('second', timestamp 'now'), 1);";
-            PreparedStatement statement = conn.prepareStatement(request);
-            statement.execute();
+            String requestF = "INSERT INTO orders (id_client, order_date, status) " +
+                    "VALUES (" + id_client + ", date_trunc('second', timestamp 'now'), 1);";
+            PreparedStatement statementF = conn.prepareStatement(requestF);
+            statementF.execute();
+            for (ProductInBasket productInBasket: obsListNewOrder) {
+                String requestS = "INSERT INTO order_products (order_id, product_id, quantity) " +
+                        "VALUES ((SELECT id FROM orders ORDER BY id DESC LIMIT 1), " + productInBasket.getId() + ", " + productInBasket.getVolume() + ");";
+                PreparedStatement statementS = conn.prepareStatement(requestS);
+                statementS.execute();
+            }
         } catch (SQLException e) {
             System.out.println("insert ERROR: " + e.getMessage());
         }
