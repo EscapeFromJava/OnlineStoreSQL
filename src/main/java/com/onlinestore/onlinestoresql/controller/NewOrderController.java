@@ -200,16 +200,16 @@ public class NewOrderController {
             }
         });
 
-        colButtonDelete.setCellFactory(new Callback<>() {
+        colButtonDelete.setCellFactory(new Callback<TableColumn<ProductInBasket, Void>, TableCell<ProductInBasket, Void>>() {
             @Override
             public TableCell<ProductInBasket, Void> call(final TableColumn<ProductInBasket, Void> param) {
                 final TableCell<ProductInBasket, Void> cell = new TableCell<ProductInBasket, Void>() {
-                    private final Button btn = new Button();
+                    private final Button btnDelete = new Button();
 
                     {
                         Image icon = new Image(getClass().getResourceAsStream("/com/onlinestore/onlinestoresql/img/trash.png"));
-                        btn.setGraphic(new ImageView(icon));
-                        btn.setOnAction((ActionEvent event) -> {
+                        btnDelete.setGraphic(new ImageView(icon));
+                        btnDelete.setOnAction((ActionEvent event) -> {
                             ProductInBasket currentProduct = getTableView().getItems().get(getIndex());
                             obsListNewOrder.remove(currentProduct);
                             updateTotalCost();
@@ -222,7 +222,7 @@ public class NewOrderController {
                         if (empty) {
                             setGraphic(null);
                         } else {
-                            setGraphic(btn);
+                            setGraphic(btnDelete);
                         }
                     }
                 };

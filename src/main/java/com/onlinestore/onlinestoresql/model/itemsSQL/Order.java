@@ -97,6 +97,20 @@ public class Order {
         this.status.set(status);
     }
 
+    public Order(int order_id, int client, String order_date, String status) {
+        setOrder_id(order_id);
+        setClient(client);
+        setOrder_date(order_date);
+        setStatus(status);
+    }
+
+    public Order(int order_id, String product, int quantity, double price) {
+        setOrder_id(order_id);
+        setProduct(product);
+        setQuantity(quantity);
+        setPrice(price);
+    }
+
     public Order(int order_id, int client, String product, int quantity, double price, String order_date, String status) {
         setOrder_id(order_id);
         setClient(client);

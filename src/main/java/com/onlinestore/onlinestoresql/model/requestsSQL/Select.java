@@ -148,16 +148,66 @@ public class Select {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 obsListOrders.add(new Order(rs.getInt("order_id"),
-                                            rs.getInt("client"),
-                                            rs.getString("product"),
-                                            rs.getInt("quantity"),
-                                            rs.getDouble("price"),
-                                            rs.getString("order_date"),
-                                            rs.getString("status")));
+                        rs.getInt("client"),
+                        rs.getString("product"),
+                        rs.getInt("quantity"),
+                        rs.getDouble("price"),
+                        rs.getString("order_date"),
+                        rs.getString("status")));
             }
         } catch (SQLException e) {
             System.out.println("select ERROR: " + e.getMessage());
         }
         return obsListOrders;
+    }
+    public static ObservableList<Order> runSQLSelectOrderNumbers(Connection conn, int idClient) {
+        ObservableList<Order> obsListOrderNumbers = FXCollections.observableArrayList();
+        try {
+            String request = "SELECT * FROM client_orders WHERE id_client = " + idClient + ";";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                obsListOrderNumbers.add(new Order(rs.getInt("id"),
+                                                    rs.getInt("id_client"),
+                                                    rs.getString("order_date"),
+                                                    rs.getString("status")));
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return obsListOrderNumbers;
+    }
+
+    public static ObservableList<Order> runSQLSelectCurrentOrder(Connection conn, int idOrder) {
+        ObservableList<Order> obsListCurrentOrder = FXCollections.observableArrayList();
+        try {
+            String request = "SELECT order_id, product, quantity, price FROM all_orders WHERE order_id = " + idOrder + ";";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                obsListCurrentOrder.add(new Order(rs.getInt("order_id"),
+                                                    rs.getString("product"),
+                                                    rs.getInt("quantity"),
+                                                    rs.getDouble("price")));
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return obsListCurrentOrder;
+    }
+
+    public static double runSQLSelectTotalCost(Connection conn, int idOrder) {
+        double totalCost = 0;
+        try {
+            String request = "SELECT SUM(quantity * price) AS total_cost FROM all_orders WHERE order_id = " + idOrder + ";";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                totalCost = rs.getDouble("total_cost");
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return totalCost;
     }
 }

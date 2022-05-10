@@ -57,7 +57,8 @@ public class Delete {
 
     public static void runSQLDeleteOrder(Connection conn, int orderNumber) {
         try {
-            String request = "DELETE FROM orders WHERE orders.id = " + orderNumber + "; ";
+            String request = "DELETE FROM order_products WHERE order_id = " + orderNumber + "; " +
+                             "DELETE FROM orders WHERE id = " + orderNumber;
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {

@@ -1,9 +1,11 @@
 package com.onlinestore.onlinestoresql.controller;
 
 import com.onlinestore.onlinestoresql.MainApplication;
-import com.onlinestore.onlinestoresql.model.itemsSQL.*;
+import com.onlinestore.onlinestoresql.model.entity.ProductInBasket;
+import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
+import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
+import com.onlinestore.onlinestoresql.model.itemsSQL.Status;
 import com.onlinestore.onlinestoresql.model.requestsSQL.Select;
-import com.onlinestore.onlinestoresql.model.requestsSQL.Update;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -26,16 +28,20 @@ import java.io.IOException;
 import java.sql.Connection;
 
 import static com.onlinestore.onlinestoresql.model.requestsSQL.Delete.runSQLDeleteOrder;
-import static com.onlinestore.onlinestoresql.model.requestsSQL.Select.runSQLSelectClients;
+import static com.onlinestore.onlinestoresql.model.requestsSQL.Select.*;
+import static com.onlinestore.onlinestoresql.model.requestsSQL.Update.runSQLUpdateStatus;
 
 public class OrdersController {
     @FXML
     TableView<Client> tblViewClients;
     @FXML
-    TableView<Order> tblViewOrders;
+    TableView<Order> tblViewOrderNumbers;
+    @FXML
+    TableView<Order> tblViewCurrentOrder;
     Connection conn;
     ObservableList<Client> obsListClients;
     ObservableList<Order> obsListOrders;
+    ObservableList<Order> obsListCurrentOrder;
     ObservableList<Status> obsListStatus;
 
     public void initialize() {
@@ -69,49 +75,60 @@ public class OrdersController {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                     if (mouseEvent.getClickCount() == 2) {
                         Client selectClient = tblViewClients.getSelectionModel().getSelectedItem();
-                        obsListOrders = Select.runSQLSelectOrders(conn, selectClient.getId());
-                        initTableOrders();
+                        obsListOrders = runSQLSelectOrderNumbers(conn, selectClient.getId());
+                        initListOrderNumbers(obsListOrders);
+                        if (obsListCurrentOrder != null)
+                            obsListCurrentOrder.clear();
                     }
                 }
             }
         });
+
+        for (TableColumn currentColumn : tblViewClients.getColumns())
+            currentColumn.setStyle("-fx-alignment: CENTER;");
     }
 
-    public void initTableOrders() {
+    public void initListOrderNumbers(ObservableList<Order> obsListOrders){
         initComboBoxStatus();
         ObservableList<String> obsListOnlyStatus = FXCollections.observableArrayList(obsListStatus.stream().map(x -> x.getStatus()).toList());
 
         TableColumn<Order, Integer> colOrderId = new TableColumn<>("ID");
-        TableColumn<Order, String> colProduct = new TableColumn<>("Product");
-        TableColumn<Order, Double> colPrice = new TableColumn<>("Price");
-        TableColumn<Order, Integer> colQuantity = new TableColumn<>("Quantity");
-        TableColumn<Order, String> colOrderDate = new TableColumn<>("Order date");
+        TableColumn<Order, String> colOrderDate = new TableColumn<>("Order Date");
+        TableColumn<Order, Double> colTotalCost = new TableColumn<>("Total Cost");
         TableColumn<Order, String> colStatus = new TableColumn<>("Status");
-        TableColumn<Order, Void> colButtonDelete = new TableColumn<>("Del");
-        colOrderId.setMinWidth(40);
-        colOrderId.setMaxWidth(40);
-        colProduct.setMinWidth(300);
-        colPrice.setMinWidth(120);
-        colPrice.setMaxWidth(120);
-        colQuantity.setMinWidth(80);
-        colQuantity.setMaxWidth(80);
-        colOrderDate.setMinWidth(200);
-        colOrderDate.setMaxWidth(200);
-        colStatus.setMinWidth(100);
-        colStatus.setMaxWidth(100);
-        colButtonDelete.setMinWidth(40);
-        colButtonDelete.setMaxWidth(40);
+        TableColumn<Order, Void> colButtonDelete = new TableColumn<>();
 
-
-        tblViewOrders.getColumns().clear();
-        tblViewOrders.getColumns().addAll(colOrderId, colProduct, colPrice, colQuantity, colOrderDate, colStatus, colButtonDelete);
-        tblViewOrders.setItems(obsListOrders);
+        tblViewOrderNumbers.getColumns().clear();
+        tblViewOrderNumbers.getColumns().addAll(colOrderId, colOrderDate, colTotalCost, colStatus, colButtonDelete);
+        tblViewOrderNumbers.setItems(obsListOrders);
 
         colOrderId.setCellValueFactory(new PropertyValueFactory<Order, Integer>("order_id"));
-        colProduct.setCellValueFactory(el -> el.getValue().productProperty());
-        colQuantity.setCellValueFactory(new PropertyValueFactory<Order, Integer>("quantity"));
-        colPrice.setCellValueFactory(new PropertyValueFactory<Order, Double>("price"));
         colOrderDate.setCellValueFactory(el -> el.getValue().order_dateProperty());
+        colTotalCost.setCellFactory(new Callback<TableColumn<Order, Double>, TableCell<Order, Double>>() {
+            @Override
+            public TableCell<Order, Double> call(final TableColumn<Order, Double> param) {
+                final TableCell<Order, Double> cell = new TableCell<Order, Double>() {
+                    private final Label lblTotalCost = new Label();
+
+                    {
+                    }
+                    @Override
+                    public void updateItem(Double item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(lblTotalCost);
+                            Order currentOrder = tblViewOrderNumbers.getSelectionModel().getTableView().getItems().get(getIndex());
+                            double totalPrice = runSQLSelectTotalCost(conn, currentOrder.getOrder_id());
+                            lblTotalCost.setText(String.valueOf(totalPrice));
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+        colStatus.setCellValueFactory(el -> el.getValue().statusProperty());
         colStatus.setCellFactory(new Callback<TableColumn<Order, String>, TableCell<Order, String>>() {
             @Override
             public TableCell<Order, String> call(final TableColumn<Order, String> param) {
@@ -131,10 +148,10 @@ public class OrdersController {
                             setGraphic(comboBoxStatus);
                             comboBoxStatus.setValue(item);
                             comboBoxStatus.setOnAction(event -> {
-                                Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
+                                Order selectOrder = tblViewOrderNumbers.getSelectionModel().getSelectedItem();
                                 if (selectOrder != null && comboBoxStatus.isFocused()) {
                                     int idStatus = obsListStatus.stream().filter(x -> x.getStatus().equals(comboBoxStatus.getValue())).findFirst().get().getId();
-                                    Update.runSQLUpdateStatus(conn, idStatus, selectOrder.getOrder_id());
+                                    runSQLUpdateStatus(conn, idStatus, selectOrder.getOrder_id());
                                 }
                             });
                         }
@@ -144,11 +161,7 @@ public class OrdersController {
             }
         });
 
-        colStatus.setCellValueFactory(order ->
-        {
-            return order.getValue().statusProperty();
-        });
-        colButtonDelete.setCellFactory(new Callback<>() {
+        colButtonDelete.setCellFactory(new Callback<TableColumn<Order, Void>, TableCell<Order, Void>>() {
             @Override
             public TableCell<Order, Void> call(final TableColumn<Order, Void> param) {
                 final TableCell<Order, Void> cell = new TableCell<Order, Void>() {
@@ -157,12 +170,6 @@ public class OrdersController {
                     {
                         Image icon = new Image(getClass().getResourceAsStream("/com/onlinestore/onlinestoresql/img/trash.png"));
                         btnDelete.setGraphic(new ImageView(icon));
-                        btnDelete.setOnAction((ActionEvent event) -> {
-                            Order currentOrder = getTableView().getItems().get(getIndex());
-                            obsListOrders.remove(currentOrder);
-                            runSQLDeleteOrder(conn, currentOrder.getOrder_id());
-                            initTableOrders();
-                        });
                     }
 
                     @Override
@@ -172,6 +179,13 @@ public class OrdersController {
                             setGraphic(null);
                         } else {
                             setGraphic(btnDelete);
+                            btnDelete.setOnAction((ActionEvent event) -> {
+                                Order currentOrder = getTableView().getItems().get(getIndex());
+                                obsListOrders.remove(currentOrder);
+                                runSQLDeleteOrder(conn, currentOrder.getOrder_id());
+                                if (obsListCurrentOrder != null)
+                                    obsListCurrentOrder.clear();
+                            });
                         }
                     }
                 };
@@ -179,26 +193,42 @@ public class OrdersController {
             }
         });
 
-        for (TableColumn currentColumn : tblViewOrders.getColumns())
+        for (TableColumn currentColumn : tblViewOrderNumbers.getColumns())
             currentColumn.setStyle("-fx-alignment: CENTER;");
 
-        tblViewOrders.getSortOrder().setAll(colOrderId);
+        tblViewOrderNumbers.getSortOrder().setAll(colOrderId);
+
+        tblViewOrderNumbers.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    if (mouseEvent.getClickCount() == 2) {
+                        int selectOrder = tblViewOrderNumbers.getSelectionModel().getSelectedItem().getOrder_id();
+                        obsListCurrentOrder = runSQLSelectCurrentOrder(conn, selectOrder);
+                        initTableCurrentOrder(obsListCurrentOrder);
+                    }
+                }
+            }
+        });
     }
+    public void initTableCurrentOrder(ObservableList<Order> obsListCurrentOrder) {
+        TableColumn<Order, String> colProduct = new TableColumn<>("Product");
+        TableColumn<Order, Double> colPrice = new TableColumn<>("Price");
+        TableColumn<Order, Integer> colQuantity = new TableColumn<>("Quantity");
 
-    public void onTableViewOrdersClicked() {
-        Order selectOrder = tblViewOrders.getSelectionModel().getSelectedItem();
-        if (selectOrder.getOrder_date() != null) {
-        }
+        tblViewCurrentOrder.getColumns().clear();
+        tblViewCurrentOrder.getColumns().addAll(colProduct, colPrice, colQuantity);
+        tblViewCurrentOrder.setItems(obsListCurrentOrder);
+
+        colProduct.setCellValueFactory(el -> el.getValue().productProperty());
+        colQuantity.setCellValueFactory(new PropertyValueFactory<Order, Integer>("quantity"));
+        colPrice.setCellValueFactory(new PropertyValueFactory<Order, Double>("price"));
+
+        for (TableColumn currentColumn : tblViewCurrentOrder.getColumns())
+            currentColumn.setStyle("-fx-alignment: CENTER;");
+
+        tblViewCurrentOrder.getSortOrder().setAll(colProduct);
     }
-
-    public void updateTables() {
-        initComboBoxStatus();
-        initTableClients();
-    }
-
-
-
-
     public void onButtonClientsClick() {
         try {
             Stage stage = new Stage();
@@ -206,8 +236,8 @@ public class OrdersController {
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.setTitle("Clients");
             stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/clients.png")));
-            stage.setMinWidth(800);
-            stage.setMinHeight(600);
+            stage.setMinWidth(1200);
+            stage.setMinHeight(800);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 public void handle(WindowEvent we) {
@@ -264,5 +294,10 @@ public class OrdersController {
 
     public void onButtonRefreshAllClick() {
         updateTables();
+    }
+
+    public void updateTables() {
+        initComboBoxStatus();
+        initTableClients();
     }
 }

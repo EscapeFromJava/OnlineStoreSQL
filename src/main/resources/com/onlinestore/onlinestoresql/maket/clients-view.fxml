@@ -6,12 +6,12 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<?import javafx.scene.control.Tooltip?>
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.onlinestore.onlinestoresql.controller.ClientsController">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.onlinestore.onlinestoresql.controller.ClientsController">
    <children>
       <TableView fx:id="tblViewClients" editable="true" layoutX="14.0" layoutY="14.0" onMouseClicked="#onTableClientsClicked" prefHeight="430.0" prefWidth="770.0" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
          <columnResizePolicy>
@@ -25,7 +25,7 @@
             </ContextMenu>
          </contextMenu>
       </TableView>
-      <AnchorPane fx:id="paneAddClient" layoutX="119.0" layoutY="462.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="119.0" AnchorPane.rightAnchor="119.0">
+      <AnchorPane fx:id="paneAddClient" layoutX="319.0" layoutY="665.0" prefHeight="121.0" prefWidth="562.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="319.0" AnchorPane.rightAnchor="319.0">
          <children>
             <TextField fx:id="textFieldFirstName" promptText="First name" />
             <TextField fx:id="textFieldLastName" layoutX="172.0" promptText="Last name" />
@@ -37,7 +37,7 @@
             <TextField fx:id="textFieldApartment" layoutX="347.0" layoutY="93.0" promptText="Apartment" />
             <Button layoutX="521.0" layoutY="25.0" mnemonicParsing="false" onAction="#onButtonAddClientClick">
                <tooltip>
-                  <Tooltip text = "Add client" />
+                  <Tooltip text="Add client" />
                </tooltip>
                <graphic>
                   <ImageView>
@@ -47,7 +47,7 @@
             </Button>
             <Button layoutX="521.0" layoutY="77.0" mnemonicParsing="false" onAction="#onButtonClearClick">
                <tooltip>
-                  <Tooltip text = "Clear fields" />
+                  <Tooltip text="Clear fields" />
                </tooltip>
                <graphic>
                   <ImageView>
@@ -57,7 +57,7 @@
             </Button>
             <Button layoutX="54.0" layoutY="88.0" mnemonicParsing="false" onAction="#onButtonAddCityClick">
                <tooltip>
-                  <Tooltip text = "Add city" />
+                  <Tooltip text="Add city" />
                </tooltip>
                <graphic>
                   <ImageView>

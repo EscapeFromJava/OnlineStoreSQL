@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
@@ -18,7 +19,9 @@ public class LoginMenu {
     @FXML
     Button btnLogin;
     @FXML
-    TextField textFieldUsername, textFieldPassword;
+    PasswordField passFieldPassword;
+    @FXML
+    TextField textFieldUsername;
 
     public void initialize(){
     }
