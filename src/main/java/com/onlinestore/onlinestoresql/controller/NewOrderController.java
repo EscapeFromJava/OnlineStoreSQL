@@ -39,7 +39,6 @@ public class NewOrderController {
     TableView<ProductInBasket> tblViewBasket;
     @FXML
     TableView<Product> tblViewProducts;
-
     int idClient;
     Connection conn;
     ObservableList<Client> obsListClients;

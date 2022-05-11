@@ -5,18 +5,20 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Update {
-    public static void runSQLUpdateDate(Connection conn, String date, int id) {
+
+    public static void runSQLUpdateBrand(Connection conn, String newBrand, int id) {
         try {
-            String request = "UPDATE orders SET order_date = '" + date + "' WHERE id = " + id + "; ";
+            String request = "UPDATE brand SET brand = '" + newBrand + "' WHERE id = " + id + "; ";
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {
             System.out.println("update ERROR: " + e.getMessage());
         }
     }
-    public static void runSQLUpdateStatus(Connection conn, int status, int id) {
+
+    public static void runSQLUpdateCategory(Connection conn, String newCategory, int id) {
         try {
-            String request = "UPDATE orders SET status = " + status + " WHERE id = " + id + "; ";
+            String request = "UPDATE category SET category = '" + newCategory + "' WHERE id = " + id + "; ";
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {
@@ -34,19 +36,9 @@ public class Update {
         }
     }
 
-    public static void runSQLUpdateBrand(Connection conn, String newBrand, int id) {
+    public static void runSQLUpdateStatus(Connection conn, int status, int id) {
         try {
-            String request = "UPDATE brand SET brand = '" + newBrand + "' WHERE id = " + id + "; ";
-            PreparedStatement statement = conn.prepareStatement(request);
-            statement.execute();
-        } catch (SQLException e) {
-            System.out.println("update ERROR: " + e.getMessage());
-        }
-    }
-
-    public static void runSQLUpdateCategory(Connection conn, String newCategory, int id) {
-        try {
-            String request = "UPDATE category SET category = '" + newCategory + "' WHERE id = " + id + "; ";
+            String request = "UPDATE orders SET status = " + status + " WHERE id = " + id + "; ";
             PreparedStatement statement = conn.prepareStatement(request);
             statement.execute();
         } catch (SQLException e) {

@@ -187,16 +187,15 @@ public class ClientsController {
             }
         }
 
-        Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+        Pattern patternOnlyDigit = Pattern.compile("-?\\d+(\\.\\d+)?");
 
         if (!textFieldFirstName.getText().equals("") &&
                 !textFieldLastName.getText().equals("") &&
                 !textFieldPhoneNumber.getText().equals("") &&
                 !textFieldDistrict.getText().equals("") &&
                 !textFieldStreet.getText().equals("") &&
-                pattern.matcher(textFieldHouse.getText()).matches() &&
-                pattern.matcher(textFieldApartment.getText()).matches()
-        ) {
+                patternOnlyDigit.matcher(textFieldHouse.getText()).matches() &&
+                patternOnlyDigit.matcher(textFieldApartment.getText()).matches()) {
             Client newClient = new Client(textFieldFirstName.getText(),
                     textFieldLastName.getText(),
                     textFieldPhoneNumber.getText(),

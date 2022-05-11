@@ -139,27 +139,6 @@ public class Select {
         }
         return obsListCity;
     }
-
-    public static ObservableList<Order> runSQLSelectOrders(Connection conn, int idClient) {
-        ObservableList<Order> obsListOrders = FXCollections.observableArrayList();
-        try {
-            String request = "SELECT * FROM client_orders WHERE client = " + idClient + ";";
-            PreparedStatement statement = conn.prepareStatement(request);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                obsListOrders.add(new Order(rs.getInt("order_id"),
-                        rs.getInt("client"),
-                        rs.getString("product"),
-                        rs.getInt("quantity"),
-                        rs.getDouble("price"),
-                        rs.getString("order_date"),
-                        rs.getString("status")));
-            }
-        } catch (SQLException e) {
-            System.out.println("select ERROR: " + e.getMessage());
-        }
-        return obsListOrders;
-    }
     public static ObservableList<Order> runSQLSelectOrderNumbers(Connection conn, int idClient) {
         ObservableList<Order> obsListOrderNumbers = FXCollections.observableArrayList();
         try {
@@ -176,6 +155,21 @@ public class Select {
             System.out.println("select ERROR: " + e.getMessage());
         }
         return obsListOrderNumbers;
+    }
+    public static ObservableList<Order> runSQLSelectOrders(Connection conn) {
+        ObservableList<Order> obsListOrders = FXCollections.observableArrayList();
+        try {
+            String request = "SELECT id, order_date FROM client_orders;";
+            PreparedStatement statement = conn.prepareStatement(request);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                obsListOrders.add(new Order(rs.getInt("id"),
+                                            rs.getString("order_date")));
+            }
+        } catch (SQLException e) {
+            System.out.println("select ERROR: " + e.getMessage());
+        }
+        return obsListOrders;
     }
 
     public static ObservableList<Order> runSQLSelectCurrentOrder(Connection conn, int idOrder) {

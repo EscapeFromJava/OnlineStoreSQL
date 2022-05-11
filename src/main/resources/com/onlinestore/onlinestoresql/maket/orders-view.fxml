@@ -46,6 +46,15 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#onButtonStatisticsClick" prefWidth="100.0" text="Statistics" textAlignment="CENTER">
+               <graphic>
+                  <ImageView>
+                     <image>
+                        <Image requestedHeight="25" requestedWidth="25" url="@../img/statistics.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <Button alignment="CENTER" mnemonicParsing="false" onAction="#onButtonRefreshAllClick" prefWidth="100.0" text="Refresh">
                     <graphic>
                         <ImageView>

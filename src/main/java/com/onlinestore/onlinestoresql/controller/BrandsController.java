@@ -22,7 +22,6 @@ public class BrandsController {
     @FXML
     TextField textFieldNewBrand;
     Connection conn;
-
     ObservableList<Brand> obsListBrand;
 
     public void initialize(){

@@ -97,6 +97,10 @@ public class Order {
         this.status.set(status);
     }
 
+    public Order(int order_id, String order_date) {
+        setOrder_id(order_id);
+        setOrder_date(order_date);
+    }
     public Order(int order_id, int client, String order_date, String status) {
         setOrder_id(order_id);
         setClient(client);
@@ -123,6 +127,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Orders{" + order_id + " | " + client + " | " + product + " | " + quantity + " | " + price + " | " + order_date + " | " + status + '}';
+        return getOrder_date().substring(0, 4);
     }
 }

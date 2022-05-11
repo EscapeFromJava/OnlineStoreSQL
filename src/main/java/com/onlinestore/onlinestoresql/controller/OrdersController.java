@@ -1,7 +1,6 @@
 package com.onlinestore.onlinestoresql.controller;
 
 import com.onlinestore.onlinestoresql.MainApplication;
-import com.onlinestore.onlinestoresql.model.entity.ProductInBasket;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Client;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Order;
 import com.onlinestore.onlinestoresql.model.itemsSQL.Status;
@@ -292,12 +291,29 @@ public class OrdersController {
         }
     }
 
+    public void onButtonStatisticsClick(ActionEvent actionEvent) {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("maket/statistics-view.fxml"));
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.setTitle("Statistics");
+            stage.getIcons().add(new Image(MainApplication.class.getResourceAsStream("img/statistics.png")));
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void onButtonRefreshAllClick() {
         updateTables();
     }
 
     public void updateTables() {
-        initComboBoxStatus();
         initTableClients();
     }
+
+
 }

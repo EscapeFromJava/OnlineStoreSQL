@@ -22,14 +22,11 @@ public class CategoriesController {
     @FXML
     TextField textFieldNewCategory;
     Connection conn;
-
     ObservableList<Category> obsListCategory;
-
     public void initialize(){
         conn = MainApplication.conn;
         initTableCategories();
     }
-
     private void initTableCategories() {
         obsListCategory = runSQLSelectCategory(conn);
 
