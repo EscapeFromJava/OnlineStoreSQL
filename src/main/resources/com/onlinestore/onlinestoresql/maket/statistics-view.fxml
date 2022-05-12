@@ -3,21 +3,17 @@
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.AnchorPane?>
-
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.onlinestore.onlinestoresql.controller.StatisticsController">
    <children>
-      <BarChart fx:id="barChartOrders" layoutX="14.0" layoutY="14.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <BarChart fx:id="barChartOrders" layoutX="14.0" layoutY="14.0" prefWidth="770.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
         <xAxis>
-          <CategoryAxis side="BOTTOM" />
+          <CategoryAxis label="Year" side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis side="LEFT" tickUnit="10.0" />
+          <NumberAxis label="Number of orders" minorTickCount="0" minorTickLength="0.0" side="LEFT" tickUnit="10.0" />
         </yAxis>
       </BarChart>
-      <ComboBox fx:id="comboBoxMonth" layoutX="221.0" layoutY="500.0" prefWidth="150.0" promptText="Month" />
-      <ComboBox fx:id="comboBoxYear" layoutX="56.0" layoutY="500.0" prefWidth="150.0" promptText="Year" />
    </children>
 </AnchorPane>
